@@ -103,9 +103,111 @@ export function GalleryPage({ type }: { type: GalleryType }) {
 }
 
 export function PhotographyPage() {
-  return <GalleryPage type="photography" />;
+  const fireflies = Array.from({ length: 72 }, (_, i) => {
+    const band = i % 3;
+    // Spread across the full viewport, with extra density in the lower third
+    const y =
+      band === 0
+        ? 6 + ((i * 13) % 28)
+        : band === 1
+          ? 36 + ((i * 11) % 28)
+          : 68 + ((i * 7) % 28);
+
+    return {
+      id: i,
+      pattern: (i % 6) + 1,
+      x: ((i * 17) % 94) + 3,
+      y,
+      size: 0.26 + ((i * 7) % 5) * 0.08,
+      delay: (i % 14) * 0.48,
+      duration: 6.5 + (i % 9) * 1.2,
+    };
+  });
+
+  return (
+    <div className="photo-gallery-stage">
+      <div className="photo-gallery-fireflies" aria-hidden="true">
+        {fireflies.map((fly) => (
+          <span
+            key={fly.id}
+            className={`photo-firefly photo-firefly--p${fly.pattern}${fly.y >= 68 ? " photo-firefly--low" : ""}`}
+            style={{
+              left: `${fly.x}%`,
+              top: `${fly.y}%`,
+              width: `${fly.size}rem`,
+              height: `${fly.size}rem`,
+              animationDelay: `${fly.delay}s`,
+              animationDuration: `${fly.duration}s`,
+            }}
+          />
+        ))}
+      </div>
+      <GalleryPage type="photography" />
+    </div>
+  );
 }
 
 export function PaintingPage() {
-  return <GalleryPage type="painting" />;
+  const butterflies = Array.from({ length: 12 }, (_, i) => {
+    const band = i % 3;
+    const y =
+      band === 0
+        ? 8 + ((i * 19) % 22)
+        : band === 1
+          ? 38 + ((i * 17) % 24)
+          : 72 + ((i * 11) % 20);
+
+    return {
+      id: i,
+      pattern: (i % 4) + 1,
+      tint: (i % 3) + 1,
+      x: 4 + ((i * 23) % 88),
+      y,
+      scale: 0.7 + ((i * 5) % 4) * 0.12,
+      delay: (i % 8) * 0.7,
+      duration: 22 + (i % 5) * 4.2,
+      flap: 0.28 + (i % 5) * 0.06,
+      bob: 2.4 + (i % 4) * 0.55,
+    };
+  });
+
+  return (
+    <div className="paint-gallery-stage">
+      <div className="paint-gallery-butterflies" aria-hidden="true">
+        {butterflies.map((bug) => (
+          <span
+            key={bug.id}
+            className={`paint-butterfly paint-butterfly--p${bug.pattern} paint-butterfly--t${bug.tint}`}
+            style={{
+              left: `${bug.x}%`,
+              top: `${bug.y}%`,
+              ["--paint-butterfly-scale" as string]: bug.scale,
+              animationDelay: `${bug.delay}s`,
+              animationDuration: `${bug.duration}s`,
+            }}
+          >
+            <span
+              className="paint-butterfly-motion"
+              style={{
+                animationDelay: `${bug.delay * 0.4}s`,
+                animationDuration: `${bug.bob}s`,
+              }}
+            >
+              <span
+                className="paint-butterfly-wing paint-butterfly-wing--l"
+                style={{ animationDuration: `${bug.flap}s`, animationDelay: `${bug.delay * 0.2}s` }}
+              />
+              <span
+                className="paint-butterfly-wing paint-butterfly-wing--r"
+                style={{ animationDuration: `${bug.flap}s`, animationDelay: `${bug.delay * 0.2}s` }}
+              />
+              <span className="paint-butterfly-body" />
+              <span className="paint-butterfly-glow" />
+            </span>
+          </span>
+        ))}
+      </div>
+      <GalleryPage type="painting" />
+    </div>
+  );
 }

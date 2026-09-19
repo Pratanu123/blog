@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import type { SiteSettings } from "../../types";
+import { WelcomeWitch } from "../../components/home/WelcomeWitch";
 
 const THOUGHT_COUNT = 8;
 
@@ -63,6 +64,17 @@ const trailRects = [
   { w: "w-2", h: "h-2", radius: "rounded-sm" },
 ] as const;
 
+const floatingLanterns = Array.from({ length: 8 }, (_, i) => ({
+  id: i,
+  pattern: (i % 3) + 1,
+  tint: (i % 3) + 1,
+  x: 6 + ((i * 23) % 82),
+  size: 3.6 + ((i * 7) % 5) * 0.4,
+  delay: (i % 6) * 2.8,
+  duration: 28 + (i % 5) * 5,
+  sway: 3.5 + (i % 4) * 1.8,
+}));
+
 export function AboutPage() {
   const { settings } = useOutletContext<{ settings: SiteSettings }>();
   const thoughts = useMemo(() => splitIntoThoughts(settings.about_content), [settings.about_content]);
@@ -74,7 +86,35 @@ export function AboutPage() {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(196,92,38,0.12),transparent_55%),radial-gradient(ellipse_at_80%_40%,rgba(22,19,16,0.06),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_50%_0%,rgba(196,92,38,0.18),transparent_55%),radial-gradient(ellipse_at_20%_60%,rgba(251,247,240,0.04),transparent_45%)]"
       />
-      <div className="relative mx-auto flex max-w-3xl flex-col px-4 pb-10 pt-16">
+
+      <div className="inspiration-lanterns" aria-hidden="true">
+        {floatingLanterns.map((lantern) => (
+          <span
+            key={lantern.id}
+            className={`inspiration-lantern inspiration-lantern--p${lantern.pattern} inspiration-lantern--t${lantern.tint}`}
+            style={{
+              left: `${lantern.x}%`,
+              width: `${lantern.size}rem`,
+              height: `${lantern.size * 1.35}rem`,
+              animationDelay: `${lantern.delay}s`,
+              animationDuration: `${lantern.duration}s`,
+              ["--inspiration-lantern-sway" as string]: `${lantern.sway}vw`,
+            }}
+          >
+            <span className="inspiration-lantern-string" />
+            <span className="inspiration-lantern-cap inspiration-lantern-cap--top" />
+            <span className="inspiration-lantern-paper">
+              <span className="inspiration-lantern-fold" />
+              <span className="inspiration-lantern-glow-core" />
+            </span>
+            <span className="inspiration-lantern-cap inspiration-lantern-cap--bottom" />
+            <span className="inspiration-lantern-tassel" />
+            <span className="inspiration-lantern-glow" />
+          </span>
+        ))}
+      </div>
+
+      <div className="relative z-[1] mx-auto flex max-w-3xl flex-col px-4 pb-10 pt-16">
         <p className="text-center text-xs uppercase tracking-[0.24em] text-rust-600">Blog Inspiration</p>
         <h1 className="mx-auto mt-3 max-w-2xl text-center font-display text-4xl leading-tight md:text-5xl">
           Thoughts rising from the newsroom
@@ -116,103 +156,10 @@ export function AboutPage() {
         </div>
 
         <div className="relative mx-auto mt-1 flex w-full max-w-sm flex-col items-center">
-          <FemaleThinker />
+          <WelcomeWitch className="inspiration-witch" />
           <p className="mt-2 text-center text-xs uppercase tracking-[0.2em] text-zinc-500">Editor at the desk</p>
         </div>
       </div>
     </div>
-  );
-}
-
-function FemaleThinker() {
-  return (
-    <svg
-      viewBox="0 0 220 260"
-      className="mind-silhouette h-56 w-48 text-ink-900 dark:text-paper-100"
-      role="img"
-      aria-label="Hand-drawn female caricature thinking"
-    >
-      <defs>
-        <style>{`
-          .ink { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
-          .fill-ink { fill: currentColor; }
-        `}</style>
-      </defs>
-
-      {/* desk shadow */}
-      <ellipse cx="110" cy="248" rx="62" ry="8" className="fill-ink" opacity="0.1" />
-
-      {/* shoulders / sweater */}
-      <path
-        className="ink"
-        strokeWidth="2.4"
-        d="M48 236c8-34 28-52 62-52s54 18 62 52"
-        fill="currentColor"
-        fillOpacity="0.06"
-      />
-      <path className="ink" strokeWidth="2.2" d="M70 210c12 8 28 12 40 12s28-4 40-12" />
-
-      {/* neck */}
-      <path className="ink" strokeWidth="2" d="M98 168c2 14 6 22 12 28m12-28c-2 14-6 22-12 28" />
-
-      {/* hair bun */}
-      <ellipse cx="148" cy="78" rx="22" ry="20" className="ink" strokeWidth="2.2" fill="currentColor" fillOpacity="0.08" />
-      <path className="ink" strokeWidth="1.8" d="M132 70c4-8 12-12 20-10m-4 18c6 2 12 0 16-6" />
-
-      {/* hair mass */}
-      <path
-        className="ink"
-        strokeWidth="2.3"
-        fill="currentColor"
-        fillOpacity="0.07"
-        d="M72 118c-10-28 4-62 38-70 18-4 36 2 46 16 8 12 8 28 2 40-2 6 2 10 8 12 4 2 6 8 2 12-10 8-24 4-30-2-4 16-18 28-36 30-22 2-38-12-30-38z"
-      />
-      {/* loose strands */}
-      <path className="ink" strokeWidth="1.6" d="M68 130c-8 10-10 24-6 36m78 8c10 6 18 18 20 30" />
-
-      {/* face */}
-      <path
-        className="ink"
-        strokeWidth="2.3"
-        fill="currentColor"
-        fillOpacity="0.04"
-        d="M86 100c2-28 22-48 46-46 20 2 34 22 32 46-2 28-18 48-40 48s-40-18-38-48z"
-      />
-
-      {/* brows */}
-      <path className="ink" strokeWidth="1.8" d="M96 108c8-6 16-6 22 0" />
-      <path className="ink" strokeWidth="1.8" d="M128 106c7-5 14-4 20 2" />
-
-      {/* eyes */}
-      <ellipse cx="108" cy="118" rx="5.5" ry="6.5" className="ink" strokeWidth="1.8" />
-      <ellipse cx="138" cy="116" rx="5.5" ry="6.5" className="ink" strokeWidth="1.8" />
-      <circle cx="109.5" cy="119" r="2.2" className="fill-ink" />
-      <circle cx="139.5" cy="117" r="2.2" className="fill-ink" />
-      <circle cx="110.5" cy="117.5" r="0.7" fill="#fbf7f0" />
-      <circle cx="140.5" cy="115.5" r="0.7" fill="#fbf7f0" />
-
-      {/* nose */}
-      <path className="ink" strokeWidth="1.7" d="M122 118c2 8 4 14 0 20" />
-
-      {/* smile */}
-      <path className="ink" strokeWidth="1.9" d="M112 146c6 7 16 8 24 2" />
-
-      {/* cheek blush */}
-      <ellipse cx="98" cy="134" rx="6" ry="3.5" fill="#c45c26" opacity="0.22" />
-      <ellipse cx="148" cy="132" rx="6" ry="3.5" fill="#c45c26" opacity="0.22" />
-
-      {/* earring */}
-      <circle cx="84" cy="132" r="3" className="ink" strokeWidth="1.5" />
-
-      {/* hand under chin */}
-      <path
-        className="ink"
-        strokeWidth="2"
-        fill="currentColor"
-        fillOpacity="0.05"
-        d="M64 178c8-4 18-2 24 6 4 6 4 14-2 18-8 6-20 2-24-8-2-6 0-12 2-16z"
-      />
-      <path className="ink" strokeWidth="1.6" d="M70 186c4 2 10 4 14 2m-12 8c5 1 10 0 14-3" />
-    </svg>
   );
 }

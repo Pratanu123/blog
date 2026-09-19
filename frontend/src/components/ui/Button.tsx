@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes } from "react";
+import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "../../utils/cn";
 
 const variants = {
@@ -9,13 +9,13 @@ const variants = {
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
 
-export function Button({
-  className,
-  variant = "primary",
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: keyof typeof variants }) {
+export const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement> & { variant?: keyof typeof variants }
+>(function Button({ className, variant = "primary", ...props }, ref) {
   return (
     <button
+      ref={ref}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rust-500 disabled:cursor-not-allowed disabled:opacity-50",
         variants[variant],
@@ -24,4 +24,4 @@ export function Button({
       {...props}
     />
   );
-}
+});

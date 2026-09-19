@@ -658,14 +658,47 @@ export function AboutMePage() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(196,92,38,0.1),transparent_50%),radial-gradient(ellipse_at_80%_80%,rgba(22,19,16,0.05),transparent_45%)] dark:bg-[radial-gradient(ellipse_at_30%_0%,rgba(196,92,38,0.16),transparent_50%),radial-gradient(ellipse_at_70%_80%,rgba(251,247,240,0.04),transparent_40%)]"
       />
 
-      <div className="relative z-10 mx-auto max-w-2xl px-5 pt-8 md:pt-10">
-        <div className="joy-note">
-          <p>Dear You,</p>
-          <p className="mt-3">
-            This puzzle is pretty much an accurate representation of how my personality is. See if you can match the correct peices to uncover a little bit about me!
-          </p>
-          <p className="mt-4">XoXo</p>
-          <p>Joe</p>
+      <div className="about-me-dear-section relative z-10 pt-8 md:pt-10">
+        <div className="about-me-dear-birds" aria-hidden="true">
+          {(
+            [
+              { tone: "scarlet", delay: 0, top: "8%", duration: 14, ya: "-6px", yb: "10px", yc: "-4px", size: "lg" },
+              { tone: "azure", delay: 3.2, top: "32%", duration: 16, ya: "8px", yb: "-12px", yc: "6px", size: "lg" },
+              { tone: "lime", delay: 6.4, top: "55%", duration: 15, ya: "-10px", yb: "6px", yc: "-8px", size: "lg" },
+              { tone: "gold", delay: 9.6, top: "78%", duration: 17, ya: "4px", yb: "-8px", yc: "10px", size: "lg" },
+              { tone: "scarlet", delay: 1.6, top: "22%", duration: 13, ya: "5px", yb: "-7px", yc: "3px", size: "sm" },
+              { tone: "azure", delay: 8, top: "68%", duration: 12, ya: "-5px", yb: "9px", yc: "-6px", size: "sm" },
+            ] as const
+          ).map((parrot, index) => (
+            <span
+              key={`${parrot.tone}-${parrot.size}-${index}`}
+              className={`about-me-dear-parrot about-me-dear-parrot--${parrot.size} home-welcome-parrot-${parrot.tone}`}
+              style={{
+                top: parrot.top,
+                animationDelay: `${parrot.delay}s`,
+                animationDuration: `${parrot.duration}s`,
+                ["--fly-ya" as string]: parrot.ya,
+                ["--fly-yb" as string]: parrot.yb,
+                ["--fly-yc" as string]: parrot.yc,
+              }}
+            >
+              <span className="home-welcome-parrot-tail" />
+              <span className="home-welcome-parrot-body" />
+              <span className="home-welcome-parrot-wing" />
+              <span className="home-welcome-parrot-head" />
+              <span className="home-welcome-parrot-beak" />
+            </span>
+          ))}
+        </div>
+        <div className="relative z-[2] mx-auto max-w-2xl px-5">
+          <div className="joy-note">
+            <p>Dear You,</p>
+            <p className="mt-3">
+              This puzzle is pretty much an accurate representation of how my personality is. See if you can match the correct peices to uncover a little bit about me!
+            </p>
+            <p className="mt-4">XoXo</p>
+            <p>Joe</p>
+          </div>
         </div>
       </div>
 
