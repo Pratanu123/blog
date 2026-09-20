@@ -23,6 +23,7 @@ class UpdateArticleRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['nullable', 'string'],
             'featured_image_id' => ['nullable', 'integer', 'exists:media,id'],
+            'author_name' => ['nullable', 'string', 'max:120'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => ['integer', 'exists:tags,id'],

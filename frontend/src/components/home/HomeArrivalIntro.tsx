@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
+import { BrandAmp, withBrandAmps } from "../brand/BrandAmp";
 
 type IntroPhase = "fly" | "open" | "letter" | "doors" | "done";
 
@@ -182,8 +183,12 @@ export function HomeArrivalIntro({
             <div className="home-envelope-flap">
               <div className="home-envelope-flap-face" />
               <div className="home-wax-seal">
-                <span>I&amp;V</span>
-                <small>Ink &amp; Voltage</small>
+                <span>
+                  I
+                  <BrandAmp />
+                  V
+                </span>
+                <small>{withBrandAmps("Ink & Voltage")}</small>
               </div>
             </div>
           </div>

@@ -1,35 +1,14 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 
-type Theme = "light" | "dark";
-
-const ThemeContext = createContext<{
-  theme: Theme;
-  toggleTheme: () => void;
-} | null>(null);
-
-function readTheme(): Theme {
-  const stored = localStorage.getItem("blogcms-theme");
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
+const ThemeContext = createContext<{ theme: "dark" } | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => (typeof window === "undefined" ? "light" : readTheme()));
-
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("blogcms-theme", theme);
-  }, [theme]);
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("blogcms-theme", "dark");
+  }, []);
 
-  const value = useMemo(
-    () => ({
-      theme,
-      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
-    }),
-    [theme],
-  );
-
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme: "dark" }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

@@ -1,4 +1,4 @@
-import type { AuditLog, Category, DashboardStats, GalleryType, GalleryWork, MediaItem, Paginated, Role, SiteSettings, Tag, User } from "../types";
+import type { AdminComment, AuditLog, Category, ContactMessage, DashboardStats, EmailCampaign, EmailTemplate, GalleryType, GalleryWork, MediaItem, NewsletterSubscriber, Paginated, Role, SiteSettings, Tag, User } from "../types";
 import { api } from "./api";
 
 export const taxonomyService = {
@@ -132,5 +132,97 @@ export const settingsService = {
   async logs(page = 1) {
     const { data } = await api.get("/audit-logs", { params: { page } });
     return data.data as Paginated<AuditLog>;
+  },
+};
+
+export const commentService = {
+  async list(params: Record<string, unknown> = {}) {
+    const { data } = await api.get("/comments", { params });
+    return data.data as Paginated<AdminComment>;
+  },
+  async create(payload: Partial<AdminComment>) {
+    const { data } = await api.post("/comments", payload);
+    return data.data as AdminComment;
+  },
+  async update(id: number, payload: Partial<AdminComment>) {
+    const { data } = await api.put(`/comments/${id}`, payload);
+    return data.data as AdminComment;
+  },
+  async destroy(id: number) {
+    await api.delete(`/comments/${id}`);
+  },
+};
+
+export const contactMessageService = {
+  async list(params: Record<string, unknown> = {}) {
+    const { data } = await api.get("/contact-messages", { params });
+    return data.data as Paginated<ContactMessage> & { unread_count: number };
+  },
+  async show(id: number) {
+    const { data } = await api.get(`/contact-messages/${id}`);
+    return data.data as ContactMessage;
+  },
+  async markRead(id: number) {
+    const { data } = await api.post(`/contact-messages/${id}/read`);
+    return data.data as ContactMessage;
+  },
+  async markUnread(id: number) {
+    const { data } = await api.post(`/contact-messages/${id}/unread`);
+    return data.data as ContactMessage;
+  },
+  async destroy(id: number) {
+    await api.delete(`/contact-messages/${id}`);
+  },
+};
+
+export const emailCampaignService = {
+  async list(params: Record<string, unknown> = {}) {
+    const { data } = await api.get("/email-campaigns", { params });
+    return data.data as Paginated<EmailCampaign>;
+  },
+  async show(id: number) {
+    const { data } = await api.get(`/email-campaigns/${id}`);
+    return data.data as EmailCampaign;
+  },
+  async send(payload: {
+    name: string;
+    email_template_id: number;
+    subscriber_ids?: number[];
+    emails?: string[];
+    scheduled_at?: string | null;
+  }) {
+    const { data } = await api.post("/email-campaigns", payload);
+    return data.data as EmailCampaign;
+  },
+  async resendFailed(id: number) {
+    const { data } = await api.post(`/email-campaigns/${id}/resend-failed`);
+    return data.data as EmailCampaign;
+  },
+  async resendRecipient(campaignId: number, recipientId: number) {
+    const { data } = await api.post(`/email-campaigns/${campaignId}/recipients/${recipientId}/resend`);
+    return data.data as EmailCampaign;
+  },
+  async templates() {
+    const { data } = await api.get("/email-templates");
+    return data.data as EmailTemplate[];
+  },
+  async createTemplate(payload: Partial<EmailTemplate>) {
+    const { data } = await api.post("/email-templates", payload);
+    return data.data as EmailTemplate;
+  },
+  async updateTemplate(id: number, payload: Partial<EmailTemplate>) {
+    const { data } = await api.put(`/email-templates/${id}`, payload);
+    return data.data as EmailTemplate;
+  },
+  async deleteTemplate(id: number) {
+    await api.delete(`/email-templates/${id}`);
+  },
+  async previewTemplate(id: number, email?: string) {
+    const { data } = await api.post(`/email-templates/${id}/preview`, { email });
+    return data.data as { subject: string; html: string };
+  },
+  async subscribers(params: Record<string, unknown> = {}) {
+    const { data } = await api.get("/newsletter-subscribers", { params });
+    return data.data as Paginated<NewsletterSubscriber>;
   },
 };

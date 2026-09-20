@@ -90,7 +90,7 @@ export function TagsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display text-4xl">Tags</h1>
+      <h1 className="font-display text-3xl sm:text-4xl">Tags</h1>
       <form
         className="flex gap-2"
         onSubmit={async (event) => {

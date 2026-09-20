@@ -29,6 +29,10 @@ export const articleService = {
     const { data } = await api.post(`/articles/${id}/archive`);
     return data.data as Article;
   },
+  async unarchive(id: number) {
+    const { data } = await api.post(`/articles/${id}/unarchive`);
+    return data.data as Article;
+  },
   async duplicate(id: number) {
     const { data } = await api.post(`/articles/${id}/duplicate`);
     return data.data as Article;

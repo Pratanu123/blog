@@ -11,6 +11,7 @@ import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
 import { Input, Select } from "../../components/ui/Input";
 import { Pagination } from "../../components/ui/Pagination";
 import { formatDate, formatNumber, formatRelative } from "../../utils/format";
+import { articleAuthorName } from "../../utils/articleAuthor";
 import { useDebounce } from "../../hooks/useDebounce";
 
 export function ArticlesPage() {
@@ -61,11 +62,21 @@ export function ArticlesPage() {
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Content</p>
-          <h1 className="font-display text-4xl">Articles</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">Articles</h1>
         </div>
-        <Link to="/admin/articles/new" className="rounded-full bg-ink-900 px-4 py-2 text-center text-sm text-white dark:bg-paper-50 dark:text-ink-900">
-          Create article
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href="/blog"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full border border-ink-200 px-4 py-2 text-center text-sm font-medium hover:border-rust-500 hover:text-rust-600 dark:border-ink-700"
+          >
+            View Journal
+          </a>
+          <Link to="/admin/articles/new" className="rounded-full bg-ink-900 px-4 py-2 text-center text-sm text-white dark:bg-paper-50 dark:text-ink-900">
+            Create article
+          </Link>
+        </div>
       </div>
       <div className="grid gap-3 md:grid-cols-4">
         <Input placeholder="Search title or excerpt" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -94,6 +105,7 @@ export function ArticlesPage() {
           <option value="">Bulk actions</option>
           <option value="publish">Publish</option>
           <option value="archive">Archive</option>
+          <option value="unarchive">Unarchive</option>
           <option value="delete">Delete</option>
         </Select>
       </div>
@@ -123,7 +135,7 @@ export function ArticlesPage() {
                   />
                 </td>
                 <td className="p-3 font-medium">{article.title}</td>
-                <td className="p-3">{article.author?.name}</td>
+                <td className="p-3">{articleAuthorName(article)}</td>
                 <td className="p-3">{article.category?.name || "—"}</td>
                 <td className="p-3"><Badge tone={article.status}>{article.status}</Badge></td>
                 <td className="p-3">{formatDate(article.published_at)}</td>
@@ -132,10 +144,26 @@ export function ArticlesPage() {
                 <td className="p-3">
                   <div className="flex flex-wrap gap-1">
                     <Button variant="ghost" onClick={() => navigate(`/admin/articles/${article.id}`)}>Edit</Button>
-                    <a className="rounded-full px-3 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-ink-800" href={`/blog/${article.slug}`} target="_blank" rel="noreferrer">Preview</a>
+                    <a
+                      className="rounded-full px-3 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-ink-800"
+                      href="/blog"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Journal
+                    </a>
+                    {article.slug ? (
+                      <a className="rounded-full px-3 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-ink-800" href={`/blog/${article.slug}`} target="_blank" rel="noreferrer">
+                        Open post
+                      </a>
+                    ) : null}
                     <Button variant="ghost" onClick={() => run(() => articleService.duplicate(article.id), "Duplicated")}>Duplicate</Button>
                     <Button variant="ghost" onClick={() => run(() => articleService.publish(article.id), "Published")}>Publish</Button>
-                    <Button variant="ghost" onClick={() => run(() => articleService.archive(article.id), "Archived")}>Archive</Button>
+                    {article.status === "archived" ? (
+                      <Button variant="ghost" onClick={() => run(() => articleService.unarchive(article.id), "Unarchived")}>Unarchive</Button>
+                    ) : (
+                      <Button variant="ghost" onClick={() => run(() => articleService.archive(article.id), "Archived")}>Archive</Button>
+                    )}
                     <Button variant="ghost" onClick={() => setPendingDelete(article)}>Delete</Button>
                   </div>
                 </td>

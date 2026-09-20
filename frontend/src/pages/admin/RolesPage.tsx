@@ -18,7 +18,7 @@ export function RolesPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display text-4xl">Roles & permissions</h1>
+      <h1 className="font-display text-3xl sm:text-4xl">Roles & permissions</h1>
       <div className="grid gap-4 lg:grid-cols-2">
         {roles.map((role) => {
           const selected = new Set(role.permissions?.map((permission) => permission.id));

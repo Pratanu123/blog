@@ -4,11 +4,15 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\EmailCampaignController;
 use App\Http\Controllers\Api\GalleryWorkController;
 use App\Http\Controllers\Api\Public\PublicGalleryController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\Public\ContactController;
+use App\Http\Controllers\Api\Public\EngagementController;
 use App\Http\Controllers\Api\Public\HomeController;
 use App\Http\Controllers\Api\Public\PublicArticleController;
 use App\Http\Controllers\Api\Public\PublicTaxonomyController;
@@ -39,9 +43,12 @@ Route::prefix('public')->group(function () {
     Route::get('tags', [PublicTaxonomyController::class, 'tags']);
     Route::get('tags/{slug}', [PublicTaxonomyController::class, 'tag']);
     Route::get('authors/{slug}', [PublicTaxonomyController::class, 'author']);
-    Route::post('contact', [ContactController::class, 'contact'])->middleware('throttle:5,1');
-    Route::post('newsletter', [ContactController::class, 'newsletter'])->middleware('throttle:8,1');
+    Route::post('contact', [ContactController::class, 'contact'])->middleware('throttle:20,1');
+    Route::post('newsletter', [ContactController::class, 'newsletter'])->middleware('throttle:20,1');
     Route::get('gallery', [PublicGalleryController::class, 'index']);
+    Route::get('engagement/{type}/{id}', [EngagementController::class, 'show'])->middleware('throttle:120,1');
+    Route::post('engagement/{type}/{id}/comments', [EngagementController::class, 'storeComment'])->middleware('throttle:30,1');
+    Route::post('engagement/{type}/{id}/like', [EngagementController::class, 'toggleLike'])->middleware('throttle:60,1');
 });
 
 Route::get('search', SearchController::class);
@@ -62,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('articles/{article}/publish', [ArticleController::class, 'publish']);
     Route::post('articles/{article}/schedule', [ArticleController::class, 'schedule']);
     Route::post('articles/{article}/archive', [ArticleController::class, 'archive']);
+    Route::post('articles/{article}/unarchive', [ArticleController::class, 'unarchive']);
     Route::post('articles/{article}/duplicate', [ArticleController::class, 'duplicate']);
     Route::get('articles/{article}/revisions', [ArticleController::class, 'revisions']);
     Route::get('articles/{article}/revisions/{revision}', [ArticleController::class, 'showRevision']);
@@ -86,6 +94,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('gallery-works', [GalleryWorkController::class, 'store']);
     Route::post('gallery-works/{galleryWork}', [GalleryWorkController::class, 'update']);
     Route::delete('gallery-works/{galleryWork}', [GalleryWorkController::class, 'destroy']);
+
+    Route::get('comments', [CommentController::class, 'index']);
+    Route::post('comments', [CommentController::class, 'store']);
+    Route::put('comments/{contentComment}', [CommentController::class, 'update']);
+    Route::delete('comments/{contentComment}', [CommentController::class, 'destroy']);
+
+    Route::get('contact-messages', [ContactMessageController::class, 'index']);
+    Route::get('contact-messages/{contactMessage}', [ContactMessageController::class, 'show']);
+    Route::post('contact-messages/{contactMessage}/read', [ContactMessageController::class, 'markRead']);
+    Route::post('contact-messages/{contactMessage}/unread', [ContactMessageController::class, 'markUnread']);
+    Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy']);
+
+    Route::get('email-campaigns', [EmailCampaignController::class, 'index']);
+    Route::post('email-campaigns', [EmailCampaignController::class, 'store']);
+    Route::get('email-campaigns/{emailCampaign}', [EmailCampaignController::class, 'show']);
+    Route::post('email-campaigns/{emailCampaign}/resend-failed', [EmailCampaignController::class, 'resendFailed']);
+    Route::post('email-campaigns/{emailCampaign}/recipients/{recipient}/resend', [EmailCampaignController::class, 'resendRecipient']);
+    Route::get('email-templates', [EmailCampaignController::class, 'templates']);
+    Route::post('email-templates', [EmailCampaignController::class, 'storeTemplate']);
+    Route::put('email-templates/{emailTemplate}', [EmailCampaignController::class, 'updateTemplate']);
+    Route::delete('email-templates/{emailTemplate}', [EmailCampaignController::class, 'destroyTemplate']);
+    Route::post('email-templates/{emailTemplate}/preview', [EmailCampaignController::class, 'previewTemplate']);
+    Route::get('newsletter-subscribers', [EmailCampaignController::class, 'subscribers']);
 
     Route::get('users', [UserController::class, 'index']);
     Route::post('users', [UserController::class, 'store']);

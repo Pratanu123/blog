@@ -20,6 +20,9 @@ class RolePermissionSeeder extends Seeder
             'tags.manage' => 'Manage tags',
             'media.manage' => 'Manage media',
             'gallery.manage' => 'Manage photography & painting galleries',
+            'comments.manage' => 'Manage comments',
+            'contact.manage' => 'Manage contact messages',
+            'campaigns.manage' => 'Manage email campaigns',
             'users.view' => 'View users',
             'users.create' => 'Create users',
             'users.edit' => 'Edit users',
@@ -38,14 +41,15 @@ class RolePermissionSeeder extends Seeder
                 'name' => 'Editor',
                 'permissions' => [
                     'articles.view', 'articles.create', 'articles.edit', 'articles.delete', 'articles.publish',
-                    'categories.manage', 'tags.manage', 'media.manage', 'gallery.manage',
+                    'categories.manage', 'tags.manage', 'media.manage', 'gallery.manage', 'comments.manage', 'contact.manage',
+                    'campaigns.manage',
                 ],
             ],
             'author' => [
                 'name' => 'Author',
                 'permissions' => [
                     'articles.view', 'articles.create', 'articles.edit',
-                    'media.manage', 'gallery.manage',
+                    'media.manage', 'gallery.manage', 'comments.manage',
                 ],
             ],
         ];

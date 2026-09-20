@@ -29,7 +29,7 @@ export function MediaPage() {
   return (
     <div className="space-y-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row">
-        <h1 className="font-display text-4xl">Media library</h1>
+        <h1 className="font-display text-3xl sm:text-4xl">Media library</h1>
         <label className="rounded-full bg-ink-900 px-4 py-2 text-sm text-white dark:bg-paper-50 dark:text-ink-900">
           Upload image
           <input

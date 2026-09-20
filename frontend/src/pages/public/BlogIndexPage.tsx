@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { publicService } from "../../services/public";
 import type { Article, Paginated } from "../../types";
 import { ArticleCard } from "../../components/article/ArticleCard";
+import { PageBackLink } from "../../components/nav/PageBackLink";
 import { Pagination } from "../../components/ui/Pagination";
 import { Spinner } from "../../components/ui/Spinner";
 
@@ -71,8 +72,11 @@ export function BlogIndexPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <h1 className="font-display text-5xl">The journal</h1>
-        <div className="mt-10 grid gap-10 md:grid-cols-2">
+        <div className="mb-6">
+          <PageBackLink to="/" label="Back to Home" />
+        </div>
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl">The journal</h1>
+        <div className="display-card-grid journal-post-grid mt-10">
           {data.items.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}

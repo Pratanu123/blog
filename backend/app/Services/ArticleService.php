@@ -143,6 +143,22 @@ class ArticleService
         return $article->fresh($this->relations());
     }
 
+    public function unarchive(Article $article, User $actor): Article
+    {
+        $status = $article->published_at
+            ? ArticleStatus::Published
+            : ArticleStatus::Draft;
+
+        $article->fill([
+            'status' => $status,
+            'scheduled_at' => null,
+        ])->save();
+
+        $this->afterWrite($article, $actor, 'article.unarchived');
+
+        return $article->fresh($this->relations());
+    }
+
     public function duplicate(Article $article, User $actor): Article
     {
         $copy = $article->replicate(['slug', 'published_at', 'scheduled_at', 'views']);
@@ -201,6 +217,7 @@ class ArticleService
             match ($action) {
                 'publish' => $this->publish($article, $actor),
                 'archive' => $this->archive($article, $actor),
+                'unarchive' => $this->unarchive($article, $actor),
                 'delete' => $this->delete($article, $actor),
                 default => null,
             };
@@ -234,6 +251,9 @@ class ArticleService
                 ? $data['featured_image_id']
                 : $existing?->featured_image_id,
             'author_id' => $existing?->author_id ?? $actor->id,
+            'author_name' => array_key_exists('author_name', $data)
+                ? (filled($data['author_name']) ? trim((string) $data['author_name']) : null)
+                : $existing?->author_name,
             'category_id' => $data['category_id'] ?? $existing?->category_id,
             'status' => $status,
             'meta_title' => $data['meta_title'] ?? $existing?->meta_title,
@@ -259,7 +279,7 @@ class ArticleService
         }
 
         // Keep explicit nulls for nullable FKs (e.g. clearing featured_image_id).
-        $nullableKeys = ['featured_image_id', 'category_id', 'og_image_id', 'scheduled_at', 'canonical_url'];
+        $nullableKeys = ['featured_image_id', 'category_id', 'og_image_id', 'scheduled_at', 'canonical_url', 'author_name'];
         $filtered = Arr::where($payload, function ($value, $key) use ($nullableKeys) {
             return $value !== null || in_array($key, $nullableKeys, true);
         });

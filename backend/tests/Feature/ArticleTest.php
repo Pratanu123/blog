@@ -54,6 +54,11 @@ class ArticleTest extends TestCase
             ->postJson("/api/articles/{$article->id}/archive")
             ->assertOk()
             ->assertJsonPath('data.status', 'archived');
+
+        $this->actingAs($admin)
+            ->postJson("/api/articles/{$article->id}/unarchive")
+            ->assertOk()
+            ->assertJsonPath('data.status', 'published');
     }
 
     public function test_article_can_be_scheduled_and_published_by_command(): void

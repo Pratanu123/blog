@@ -20,6 +20,7 @@ class ArticleCardResource extends JsonResource
             'scheduled_at' => $this->scheduled_at,
             'reading_time' => $this->reading_time,
             'views' => $this->views,
+            'author_name' => $this->author_name,
             'author' => new UserResource($this->whenLoaded('author')),
             'category' => new CategoryResource($this->whenLoaded('category')),
             'featured_image' => $this->when(

@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { publicService } from "../../services/public";
 import type { Article, Paginated } from "../../types";
 import { ArticleCard } from "../../components/article/ArticleCard";
+import { PageBackLink } from "../../components/nav/PageBackLink";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { Pagination } from "../../components/ui/Pagination";
@@ -32,7 +33,11 @@ export function SearchPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="font-display text-5xl">Search</h1>
+      <div className="mb-6 flex flex-wrap gap-3">
+        <PageBackLink to="/" label="Back to Home" />
+        <PageBackLink to="/blog" label="Journal" />
+      </div>
+      <h1 className="font-display text-3xl sm:text-4xl md:text-5xl">Search</h1>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Titles, excerpts, tags, desks" />
         <Button type="submit">Search</Button>
@@ -42,7 +47,7 @@ export function SearchPage() {
           <EmptyState title="No matches" body="Try a language, a desk, or a sharper noun." />
         </div>
       ) : (
-        <div className="mt-10 grid gap-10 md:grid-cols-2">
+        <div className="display-card-grid mt-10">
           {result.items.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}

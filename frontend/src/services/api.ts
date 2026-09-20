@@ -13,12 +13,23 @@ export const api = axios.create({
   },
 });
 
+let csrfPromise: Promise<void> | null = null;
+
 export async function ensureCsrf() {
-  await axios.get("/sanctum/csrf-cookie", {
-    withCredentials: true,
-    withXSRFToken: true,
-    adapter: "fetch",
-  });
+  if (!csrfPromise) {
+    csrfPromise = axios
+      .get("/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+        adapter: "fetch",
+      })
+      .then(() => undefined)
+      .catch((error) => {
+        csrfPromise = null;
+        throw error;
+      });
+  }
+  await csrfPromise;
 }
 
 export function getErrorMessage(error: unknown, fallback = "Something went wrong") {

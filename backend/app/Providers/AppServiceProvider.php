@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\ContactMessage;
+use App\Models\ContentComment;
+use App\Models\EmailCampaign;
 use App\Models\GalleryWork;
 use App\Models\Media;
 use App\Models\Setting;
@@ -11,6 +14,9 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Policies\ArticlePolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\ContactMessagePolicy;
+use App\Policies\ContentCommentPolicy;
+use App\Policies\EmailCampaignPolicy;
 use App\Policies\GalleryWorkPolicy;
 use App\Policies\MediaPolicy;
 use App\Policies\SettingPolicy;
@@ -38,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Tag::class, TagPolicy::class);
         Gate::policy(Media::class, MediaPolicy::class);
         Gate::policy(GalleryWork::class, GalleryWorkPolicy::class);
+        Gate::policy(ContentComment::class, ContentCommentPolicy::class);
+        Gate::policy(ContactMessage::class, ContactMessagePolicy::class);
+        Gate::policy(EmailCampaign::class, EmailCampaignPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Setting::class, SettingPolicy::class);
 

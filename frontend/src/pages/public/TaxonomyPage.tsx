@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { publicService } from "../../services/public";
 import type { Article, Paginated } from "../../types";
 import { ArticleCard } from "../../components/article/ArticleCard";
+import { PageBackLink } from "../../components/nav/PageBackLink";
 import { Pagination } from "../../components/ui/Pagination";
 import { Spinner } from "../../components/ui/Spinner";
 
@@ -47,9 +48,13 @@ export function TaxonomyPage({ kind }: { kind: "category" | "tag" | "author" }) 
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="font-display text-5xl">{title}</h1>
+      <div className="mb-6 flex flex-wrap gap-3">
+        <PageBackLink to="/blog" label="Back to Journal" />
+        <PageBackLink to="/" label="Home" />
+      </div>
+      <h1 className="font-display text-3xl sm:text-4xl md:text-5xl">{title}</h1>
       <p className="mt-3 max-w-2xl text-ink-700 dark:text-paper-100/70">{body}</p>
-      <div className="mt-10 grid gap-10 md:grid-cols-2">
+      <div className="display-card-grid mt-10">
         {items.map((article) => (
           <ArticleCard key={article.id} article={article} />
         ))}

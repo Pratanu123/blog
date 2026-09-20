@@ -27,6 +27,7 @@ class ArticleResource extends JsonResource
             'twitter_card' => $this->twitter_card,
             'reading_time' => $this->reading_time,
             'views' => $this->views,
+            'author_name' => $this->author_name,
             'author' => new UserResource($this->whenLoaded('author')),
             'category' => new CategoryResource($this->whenLoaded('category')),
             'featured_image' => $this->when(

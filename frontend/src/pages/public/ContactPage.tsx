@@ -1,10 +1,13 @@
 import { FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { publicService } from "../../services/public";
 import { getErrorMessage } from "../../services/api";
 import { useToast } from "../../contexts/ToastContext";
+import type { SiteSettings } from "../../types";
 import { Button } from "../../components/ui/Button";
 import { Field, Input, Textarea } from "../../components/ui/Input";
 import { WelcomeForest } from "../../components/home/WelcomeForest";
+import { PageBackLink } from "../../components/nav/PageBackLink";
 
 const SPIT_CYCLE_MS = 5000;
 
@@ -18,11 +21,17 @@ const contactParrots = [
 ] as const;
 
 export function ContactPage() {
+  const { settings } = useOutletContext<{ settings: SiteSettings }>();
   const { push } = useToast();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
   const [glowing, setGlowing] = useState(false);
   const [spitKey, setSpitKey] = useState(0);
+
+  const title = settings.contact_title?.trim() || "Write to us";
+  const intro = settings.contact_intro?.trim() || "";
+  const submitLabel = settings.contact_submit_label?.trim() || "Send";
+  const successMessage = settings.contact_success_message?.trim() || "Message sent to the newsroom.";
 
   const stageRef = useRef<HTMLDivElement>(null);
   const mouthRef = useRef<HTMLSpanElement>(null);
@@ -126,11 +135,12 @@ export function ContactPage() {
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
+    if (sending) return;
     setSending(true);
     try {
       await publicService.contact(form);
       setForm({ name: "", email: "", message: "" });
-      push("Message sent to the newsroom.");
+      push(successMessage);
     } catch (error) {
       push(getErrorMessage(error), "error");
     } finally {
@@ -169,7 +179,11 @@ export function ContactPage() {
 
       <div className="contact-page-inner" ref={stageRef}>
         <div className="contact-form-panel">
-          <h1 className="font-display text-5xl">Write to us</h1>
+          <div className="mb-6">
+            <PageBackLink to="/" label="Back to Home" />
+          </div>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl">{title}</h1>
+          {intro ? <p className="mt-3 max-w-xl text-base leading-7 text-ink-700 dark:text-paper-100/75">{intro}</p> : null}
           <form onSubmit={onSubmit} className="contact-form mt-8 space-y-4">
             <div className="contact-field-card">
               <Field label="Name">
@@ -205,7 +219,7 @@ export function ContactPage() {
               className={`contact-send-btn${glowing ? " is-spit-lit" : ""}`}
               disabled={sending}
             >
-              {sending ? "Sending…" : "Send"}
+              {sending ? "Sending…" : submitLabel}
             </Button>
           </form>
         </div>

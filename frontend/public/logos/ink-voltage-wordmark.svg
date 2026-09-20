@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" role="img" aria-label="Ink &amp; Voltage">
+  <title>Ink &amp; Voltage</title>
+  <text x="0" y="82" font-family="Fraunces, EB Garamond, Georgia, serif" font-size="72" font-weight="600" fill="#F5F1EA">Ink</text>
+  <text x="148" y="86" font-family="EB Garamond, Georgia, serif" font-size="92" font-style="italic" font-weight="600" fill="#C45C26">&amp;</text>
+  <text x="230" y="82" font-family="Fraunces, EB Garamond, Georgia, serif" font-size="72" font-weight="600" fill="#F5F1EA">Voltage</text>
+</svg>

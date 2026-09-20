@@ -105,14 +105,24 @@ export function GalleryAdminPage({ type }: { type: GalleryType }) {
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Gallery</p>
-          <h1 className="font-display text-4xl">{label}</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">{label}</h1>
           <p className="mt-1 text-sm text-zinc-500">
             Upload {type === "photography" ? "photographs" : "paintings"} with ALT text, short description, and full image description.
           </p>
         </div>
-        <Button variant="rust" onClick={openCreate}>
-          Add {type === "photography" ? "photograph" : "painting"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={type === "photography" ? "/photography" : "/painting"}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-full border border-ink-200 px-4 py-2 text-sm font-medium hover:bg-ink-50 dark:border-ink-700 dark:hover:bg-ink-800"
+          >
+            View public {label.toLowerCase()}
+          </a>
+          <Button variant="rust" onClick={openCreate}>
+            Add {type === "photography" ? "photograph" : "painting"}
+          </Button>
+        </div>
       </div>
 
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${label.toLowerCase()}…`} />

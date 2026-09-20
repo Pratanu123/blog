@@ -97,6 +97,7 @@ export interface Article {
   twitter_card?: string | null;
   reading_time?: number;
   views?: number;
+  author_name?: string | null;
   author?: User | null;
   category?: Category | null;
   featured_image?: MediaItem | null;
@@ -147,19 +148,53 @@ export interface DashboardStats {
   tags: number;
 }
 
+export interface WelcomeDoor {
+  to: string;
+  label: string;
+  hint?: string;
+}
+
 export interface SiteSettings {
   site_name?: string;
   site_description?: string;
   site_url?: string;
   organization_name?: string;
   organization_logo?: string;
+  email_logo_url?: string;
   default_og_image?: string;
   twitter_handle?: string;
   contact_email?: string;
   about_content?: string;
   about_me_content?: string;
   newsletter_enabled?: string;
+  allow_right_click?: string;
   robots_custom?: string;
+
+  welcome_eyebrow?: string;
+  welcome_title?: string;
+  welcome_subtitle?: string;
+  welcome_doors?: WelcomeDoor[] | string;
+
+  inspiration_eyebrow?: string;
+  inspiration_title?: string;
+  inspiration_footer?: string;
+  inspiration_thoughts?: string[] | string;
+
+  about_me_greeting?: string;
+  about_me_letter?: string;
+  about_me_signoff?: string;
+  about_me_signature?: string;
+  about_me_puzzle_hint?: string;
+
+  contact_title?: string;
+  contact_intro?: string;
+  contact_submit_label?: string;
+  contact_success_message?: string;
+
+  dispatch_title?: string;
+  dispatch_subtitle?: string;
+  dispatch_placeholder?: string;
+  dispatch_button_label?: string;
 }
 
 export interface AuditLog {
@@ -172,4 +207,71 @@ export interface AuditLog {
   ip_address?: string | null;
   user?: User | null;
   created_at: string;
+}
+
+export interface AdminComment {
+  id: number;
+  target_type: "article" | "gallery_work" | string;
+  target_id: number;
+  target_title?: string | null;
+  target_url?: string | null;
+  author_name: string;
+  author_email?: string | null;
+  body: string;
+  is_approved: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  ip_address?: string | null;
+  is_read: boolean;
+  read_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface NewsletterSubscriber {
+  id: number;
+  email: string;
+  status: string;
+  created_at?: string;
+}
+
+export interface EmailTemplate {
+  id: number;
+  slug: string;
+  name: string;
+  subject: string;
+  html_body: string;
+  description?: string | null;
+  is_system: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EmailCampaignRecipient {
+  id: number;
+  email: string;
+  status: string;
+  error?: string | null;
+  sent_at?: string | null;
+}
+
+export interface EmailCampaign {
+  id: number;
+  name: string;
+  status: string;
+  sent_count: number;
+  failed_count: number;
+  sent_at?: string | null;
+  scheduled_at?: string | null;
+  created_at?: string;
+  template?: Pick<EmailTemplate, "id" | "name" | "slug" | "subject"> | null;
+  creator?: { id: number; name: string } | null;
+  recipients?: EmailCampaignRecipient[];
 }

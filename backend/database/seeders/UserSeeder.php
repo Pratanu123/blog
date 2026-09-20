@@ -6,65 +6,35 @@ use App\Enums\UserStatus;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Amina Cole',
-                'email' => 'superadmin@blogcms.test',
-                'slug' => 'amina-cole',
-                'role' => 'super-admin',
-                'bio' => 'Founder of Ink & Voltage. Writes about systems, cities, and the long now.',
-            ],
-            [
-                'name' => 'Julian Park',
-                'email' => 'admin@blogcms.test',
-                'slug' => 'julian-park',
-                'role' => 'admin',
-                'bio' => 'Operations lead who keeps the newsroom honest and the backlog short.',
-            ],
-            [
-                'name' => 'Sofia Rahman',
-                'email' => 'editor@blogcms.test',
-                'slug' => 'sofia-rahman',
-                'role' => 'editor',
-                'bio' => 'Editor with a taste for precise sentences and ambitious reporting.',
-            ],
-            [
-                'name' => 'Leo Hart',
-                'email' => 'leo@blogcms.test',
-                'slug' => 'leo-hart',
-                'role' => 'author',
-                'bio' => 'Backend engineer writing about PHP, queues, and quiet architecture.',
-            ],
-            [
-                'name' => 'Maya Chen',
-                'email' => 'maya@blogcms.test',
-                'slug' => 'maya-chen',
-                'role' => 'author',
-                'bio' => 'Product designer exploring interfaces, type, and editorial systems.',
-            ],
-        ];
+        $role = Role::query()->where('slug', 'super-admin')->firstOrFail();
 
-        foreach ($users as $data) {
-            $role = Role::query()->where('slug', $data['role'])->firstOrFail();
+        $joyeeta = User::query()->updateOrCreate(
+            ['email' => 'joyeeta@blogcms.test'],
+            [
+                'name' => 'Joyeeta',
+                'slug' => 'joyeeta',
+                'password' => Hash::make('password'),
+                'role_id' => $role->id,
+                'bio' => 'Super admin of Ink & Voltage.',
+                'status' => UserStatus::Active,
+                'email_verified_at' => now(),
+            ]
+        );
 
-            User::query()->updateOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'slug' => $data['slug'],
-                    'password' => Hash::make('password'),
-                    'role_id' => $role->id,
-                    'bio' => $data['bio'],
-                    'status' => UserStatus::Active,
-                    'email_verified_at' => now(),
-                ]
-            );
-        }
+        // Point content ownership at Joyeeta before removing other users.
+        DB::table('articles')->update(['author_id' => $joyeeta->id]);
+        DB::table('media')->whereNotNull('uploaded_by')->update(['uploaded_by' => $joyeeta->id]);
+        DB::table('gallery_works')->whereNotNull('uploaded_by')->update(['uploaded_by' => $joyeeta->id]);
+        DB::table('article_revisions')->whereNotNull('user_id')->update(['user_id' => $joyeeta->id]);
+        DB::table('audit_logs')->whereNotNull('user_id')->update(['user_id' => $joyeeta->id]);
+
+        User::query()->where('id', '!=', $joyeeta->id)->forceDelete();
     }
 }

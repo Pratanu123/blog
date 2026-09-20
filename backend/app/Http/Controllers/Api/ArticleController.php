@@ -92,6 +92,14 @@ class ArticleController extends Controller
         return ApiResponse::success(new ArticleResource($article), 'Article archived successfully');
     }
 
+    public function unarchive(Article $article): JsonResponse
+    {
+        $this->authorize('update', $article);
+        $article = $this->articles->unarchive($article, request()->user());
+
+        return ApiResponse::success(new ArticleResource($article), 'Article unarchived successfully');
+    }
+
     public function duplicate(Article $article): JsonResponse
     {
         $this->authorize('create', Article::class);
@@ -105,7 +113,7 @@ class ArticleController extends Controller
     {
         $this->authorize('viewAny', Article::class);
         $data = $request->validate([
-            'action' => ['required', 'in:publish,archive,delete'],
+            'action' => ['required', 'in:publish,archive,unarchive,delete'],
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => ['integer', 'exists:articles,id'],
         ]);

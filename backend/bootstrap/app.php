@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permission' => EnsurePermission::class,
         ]);
-        $middleware->throttleApi('60,1');
+        $middleware->throttleApi('240,1');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

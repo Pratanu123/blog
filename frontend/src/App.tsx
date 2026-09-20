@@ -20,6 +20,9 @@ import { PhotographyAdminPage, PaintingAdminPage } from "./pages/admin/GalleryAd
 import { UsersPage } from "./pages/admin/UsersPage";
 import { RolesPage } from "./pages/admin/RolesPage";
 import { AnalyticsPage } from "./pages/admin/AnalyticsPage";
+import { CommentsPage } from "./pages/admin/CommentsPage";
+import { ContactMessagesPage } from "./pages/admin/ContactMessagesPage";
+import { EmailCampaignsPage } from "./pages/admin/EmailCampaignsPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
 
 export default function App() {
@@ -47,6 +50,9 @@ export default function App() {
         <Route path="articles/:id" element={<ArticleEditorPage />} />
         <Route path="photography" element={<PhotographyAdminPage />} />
         <Route path="painting" element={<PaintingAdminPage />} />
+        <Route path="comments" element={<CommentsPage />} />
+        <Route path="messages" element={<ContactMessagesPage />} />
+        <Route path="campaigns" element={<EmailCampaignsPage />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="tags" element={<TagsPage />} />
         <Route path="media" element={<MediaPage />} />

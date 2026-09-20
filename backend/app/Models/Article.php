@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'content',
     'featured_image_id',
     'author_id',
+    'author_name',
     'category_id',
     'status',
     'published_at',

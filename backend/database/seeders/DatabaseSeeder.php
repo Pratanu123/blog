@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             TaxonomySeeder::class,
             SettingSeeder::class,
             ArticleSeeder::class,
+            GallerySeeder::class,
+            EmailTemplateSeeder::class,
         ]);
     }
 }
