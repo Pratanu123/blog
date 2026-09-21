@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { BrandAmp, withBrandAmps } from "../brand/BrandAmp";
+import { InkVoltageMark } from "../brand/InkVoltageMark";
+import { lockBodyScroll } from "../../utils/bodyScrollLock";
 
 type IntroPhase = "fly" | "open" | "letter" | "doors" | "done";
 
@@ -70,11 +71,7 @@ export function HomeArrivalIntro({
 
   useEffect(() => {
     if (!mounted) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
+    return lockBodyScroll();
   }, [mounted]);
 
   useEffect(() => {
@@ -182,13 +179,8 @@ export function HomeArrivalIntro({
 
             <div className="home-envelope-flap">
               <div className="home-envelope-flap-face" />
-              <div className="home-wax-seal">
-                <span>
-                  I
-                  <BrandAmp />
-                  V
-                </span>
-                <small>{withBrandAmps("Ink & Voltage")}</small>
+              <div className="home-wax-seal" aria-hidden="true">
+                <InkVoltageMark className="home-wax-seal-mark" title="Ink & Voltage" size={72} />
               </div>
             </div>
           </div>

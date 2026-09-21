@@ -1051,6 +1051,10 @@ body {
   color: #f4ece0;
 }
 
+.puzzle-playfield {
+  touch-action: pan-y;
+}
+
 .puzzle-piece {
   border: 0;
   padding: 0;
@@ -1362,38 +1366,31 @@ body {
   left: 50%;
   top: 78%;
   z-index: 5;
-  width: 4.4rem;
-  height: 4.4rem;
+  width: 5.1rem;
+  height: 5.1rem;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 35% 30%, #e0895a, #a3481b 55%, #6e2f12 100%);
+    radial-gradient(circle at 50% 46%, rgba(40, 18, 8, 0.55) 0%, rgba(40, 18, 8, 0.2) 58%, transparent 72%),
+    radial-gradient(circle at 32% 28%, rgba(196, 92, 38, 0.55), rgba(90, 34, 12, 0.35) 62%, transparent 78%);
   box-shadow:
-    0 8px 16px rgba(80, 30, 10, 0.35),
-    inset 0 1px 0 rgba(255, 220, 180, 0.35),
-    inset 0 -6px 12px rgba(60, 20, 5, 0.35);
+    0 10px 18px rgba(40, 12, 4, 0.4),
+    0 0 0 0.14rem rgba(140, 55, 22, 0.4);
   display: grid;
-  place-content: center;
-  text-align: center;
-  color: #f8e7cf;
+  place-items: center;
+  overflow: visible;
   backface-visibility: hidden;
 }
 
-.home-wax-seal span {
-  font-family: Fraunces, Georgia, serif;
-  font-size: 1.05rem;
-  font-weight: 680;
-  letter-spacing: 0.04em;
-  line-height: 1;
-}
-
-.home-wax-seal small {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.48rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.9;
+.home-wax-seal-mark {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 2px 3px rgba(40, 12, 4, 0.45))
+    drop-shadow(0 0 10px rgba(196, 92, 38, 0.28));
+  pointer-events: none;
+  user-select: none;
 }
 
 .home-arrival-stage.is-letter-focus .home-envelope {
@@ -2167,10 +2164,10 @@ body {
 
 @keyframes home-welcome-parrot-fly {
   0% {
-    transform: translate3d(-8vw, 0, 0) scale(0.92);
+    transform: translate3d(-4.5rem, 0, 0) scale(0.92);
     opacity: 0;
   }
-  4% {
+  6% {
     opacity: 1;
   }
   18% {
@@ -2190,7 +2187,7 @@ body {
     opacity: 1;
   }
   100% {
-    transform: translate3d(112vw, 4px, 0) scale(0.9);
+    transform: translate3d(calc(100vw + 2rem), 4px, 0) scale(0.9);
     opacity: 0;
   }
 }
@@ -2457,8 +2454,10 @@ body {
   top: 58%;
   width: 2.6rem;
   height: 1.35rem;
-  animation: home-welcome-parrot-fly 14s linear infinite;
+  opacity: 0;
+  animation: home-welcome-parrot-fly 14s linear infinite both;
   animation-delay: calc(var(--parrot-d, 0) * 1s);
+  will-change: transform, opacity;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 
@@ -3390,6 +3389,24 @@ body {
 
   .home-welcome-birds {
     opacity: 0.9;
+  }
+
+  .home-welcome-parrot {
+    width: 2.15rem;
+    height: 1.1rem;
+    animation-duration: 11.5s;
+  }
+
+  .home-welcome-parrot-azure {
+    animation-duration: 12.5s;
+  }
+
+  .home-welcome-parrot-lime {
+    animation-duration: 10.5s;
+  }
+
+  .home-welcome-parrot-gold {
+    animation-duration: 13s;
   }
 }
 

@@ -11,9 +11,9 @@ const CHARM_CYCLE_MS = 5000;
 
 const parrots = [
   { tone: "scarlet", delay: 0 },
-  { tone: "azure", delay: 4 },
-  { tone: "lime", delay: 8 },
-  { tone: "gold", delay: 12 },
+  { tone: "azure", delay: -3.8 },
+  { tone: "lime", delay: -7.2 },
+  { tone: "gold", delay: -10.6 },
 ] as const;
 
 export function HomeWelcomeHall({ revealed }: { revealed: boolean }) {

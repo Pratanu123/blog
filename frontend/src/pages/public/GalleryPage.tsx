@@ -10,6 +10,7 @@ import { ShareBar } from "../../components/share/ShareBar";
 import { Pagination } from "../../components/ui/Pagination";
 import { Spinner } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { lockBodyScroll } from "../../utils/bodyScrollLock";
 
 const copy: Record<GalleryType, { eyebrow: string; title: string; body: string; path: string }> = {
   photography: {
@@ -57,11 +58,7 @@ export function GalleryPage({ type }: { type: GalleryType }) {
 
   useEffect(() => {
     if (!active) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
+    return lockBodyScroll();
   }, [active]);
 
   function openWork(item: GalleryWork) {

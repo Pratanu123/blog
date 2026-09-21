@@ -12,6 +12,7 @@ import { NavConfettiLink } from "../components/nav/NavConfettiLink";
 import { useContentProtection } from "../hooks/useContentProtection";
 import { InkVoltageMark } from "../components/brand/InkVoltageMark";
 import { InkVoltageWordmark } from "../components/brand/InkVoltageWordmark";
+import { lockBodyScroll, resetBodyScrollLock } from "../utils/bodyScrollLock";
 
 const nav = [
   ["Journal", "/blog"],
@@ -87,15 +88,13 @@ export function PublicLayout() {
 
   useEffect(() => {
     setMenuOpen(false);
+    // Clear any leaked body scroll lock from overlays / menus (mobile iOS especially).
+    resetBodyScrollLock();
   }, [location.pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return lockBodyScroll();
   }, [menuOpen]);
 
   function bumpSearchActivity() {
