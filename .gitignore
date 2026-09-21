@@ -32,3 +32,4 @@ docker/certbot/conf/**
 !docker/certbot/conf/.gitkeep
 docker/certbot/www/**
 !docker/certbot/www/.gitkeep
+frontend/tsconfig.tsbuildinfo
