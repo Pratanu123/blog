@@ -43,6 +43,21 @@ docker compose exec frontend npm test
 
 `VITE_API_URL` defaults to `/api` so the browser stays same-origin through Nginx.
 
+## Production (inkandvoltage.com)
+
+Production domain, SSL, DNS, and VPS steps are documented in:
+
+**[docs/PRODUCTION_DEPLOYMENT.md](docs/PRODUCTION_DEPLOYMENT.md)**
+
+Summary:
+
+- Compose: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`
+- Canonical URL: `https://inkandvoltage.com` (www redirects to apex)
+- VPS IP: `187.127.162.32`
+- Local `docker compose up -d` is unchanged
+
+---
+
 ## Local URLs
 
 | Surface | URL |
