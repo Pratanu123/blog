@@ -116,7 +116,7 @@ services:
   frontend:
     environment:
       VITE_API_URL: /api
-    # Production bundle via Vite (tsc -b currently fails on pre-existing test/type issues).
-    # Same proxy port as local so Nginx routing stays unchanged.
-    command: sh -c "npm install && npx vite build && npx vite preview --host 0.0.0.0 --port 5173"
+    # Production: typecheck + Vite build, then preview (proxied by Docker Nginx).
+    # allowedHosts in vite.config.ts must include inkandvoltage.com.
+    command: sh -c "npm install && npm run build && npx vite preview --host 0.0.0.0 --port 5173"
     ports: !reset []

@@ -21,6 +21,13 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  preview: {
+    host: "0.0.0.0",
+    port: 5173,
+    strictPort: true,
+    // Nginx proxies with Host: inkandvoltage.com — Vite 6 blocks unknown hosts by default (403).
+    allowedHosts: ["inkandvoltage.com", "www.inkandvoltage.com", "localhost", "127.0.0.1"],
+  },
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
