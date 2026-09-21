@@ -46,7 +46,7 @@ export const mediaService = {
 };
 
 export const galleryService = {
-  async list(params: { type: GalleryType; search?: string; page?: number }) {
+  async list(params: { type: GalleryType; search?: string; page?: number; per_page?: number }) {
     const { data } = await api.get("/gallery-works", { params });
     return data.data as Paginated<GalleryWork>;
   },

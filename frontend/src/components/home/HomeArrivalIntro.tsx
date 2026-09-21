@@ -62,7 +62,7 @@ export function HomeArrivalIntro({
   const [phase, setPhase] = useState<IntroPhase>("fly");
   const [mounted, setMounted] = useState(false);
   const [origin, setOrigin] = useState<LetterOrigin | null>(null);
-  const emergingRef = useRef<HTMLArticleElement | null>(null);
+  const emergingRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
