@@ -33,6 +33,8 @@ export function useContentProtection(enabled = true) {
 
     const onSelectStart = (event: Event) => {
       if (isEditableTarget(event.target)) return;
+      // Preventing selectstart on coarse pointers can freeze scrolling on mobile WebKit.
+      if (window.matchMedia("(pointer: coarse)").matches) return;
       event.preventDefault();
     };
 

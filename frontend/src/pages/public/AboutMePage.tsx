@@ -418,6 +418,12 @@ export function AboutMePage() {
   }, [pieces]);
 
   useEffect(() => {
+    return () => {
+      draggingIdRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     setPieces((current) => {
       const byId = new Map(current.map((piece) => [piece.id, piece]));
       return texts.map((text, id) => {
@@ -726,7 +732,7 @@ export function AboutMePage() {
       <div className="mx-auto w-full max-w-[1400px] px-3 pb-2 md:px-5">
         <div
           ref={playfieldRef}
-          className="puzzle-playfield relative h-[min(92vh,1040px)] w-full touch-none overflow-visible"
+          className="puzzle-playfield relative h-[min(92vh,1040px)] w-full touch-pan-y overflow-visible"
         >
           {/* Top: floating pieces tray */}
           <div

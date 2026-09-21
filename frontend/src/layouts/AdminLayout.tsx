@@ -21,6 +21,7 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { cn } from "../utils/cn";
 import { InkVoltageMark } from "../components/brand/InkVoltageMark";
+import { lockBodyScroll } from "../utils/bodyScrollLock";
 
 const links = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, permission: "articles.view", end: true },
@@ -46,11 +47,7 @@ export function AdminLayout() {
 
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return lockBodyScroll();
   }, [open]);
 
   if (loading) {
