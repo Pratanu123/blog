@@ -2,22 +2,27 @@
 # Usage:
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 #
-# SSL stages:
-#   1) HTTP only (default): mounts production-http.conf — validate DNS/HTTP first
-#   2) After certs: set NGINX_CONF=production.conf and expose 443 (documented in docs/PRODUCTION_DEPLOYMENT.md)
+# React is served as static files from ./frontend/dist mounted into Nginx.
+# Vite preview/dev is NOT used in production (local compose still uses Vite).
 #
-# Keeps MySQL, Redis, and phpMyAdmin off the public Internet.
+# SSL stages:
+#   1) HTTP only: NGINX_CONF=production-http.conf
+#   2) After certs: NGINX_CONF=production.conf
 
 services:
   nginx:
     ports:
       - "80:80"
       - "443:443"
+    depends_on: !override
+      php:
+        condition: service_started
     volumes: !override
       - ./docker/nginx/${NGINX_CONF:-production-http.conf}:/etc/nginx/conf.d/default.conf:ro
       - ./docker/nginx/app-locations.conf:/etc/nginx/snippets/app-locations.conf:ro
       - ./backend:/var/www/html
       - media_storage:/var/www/html/storage/app/public
+      - ./frontend/dist:/var/www/frontend:ro
       - ./docker/certbot/www:/var/www/certbot:ro
       - ./docker/certbot/conf:/etc/letsencrypt:ro
 
@@ -113,10 +118,12 @@ services:
     ports:
       - "127.0.0.1:8081:80"
 
+  # One-shot build helper only (not started by `up`). Used by scripts/deploy.sh:
+  #   docker compose ... --profile build run --rm frontend
   frontend:
+    profiles: ["build"]
     environment:
       VITE_API_URL: /api
-    # Production: typecheck + Vite build, then preview (proxied by Docker Nginx).
-    # allowedHosts in vite.config.ts must include inkandvoltage.com.
-    command: sh -c "npm install && npm run build && npx vite preview --host 0.0.0.0 --port 5173"
+    command: sh -c "npm install && npm run build"
+    restart: "no"
     ports: !reset []

@@ -30,7 +30,14 @@ else
   echo "==> SKIP_GIT=1 — leaving working tree unchanged"
 fi
 
-echo "==> Building and starting containers"
+echo "==> Building React production assets (frontend/dist)"
+docker compose "${COMPOSE_FILES[@]}" --profile build run --rm frontend
+if [ ! -f frontend/dist/index.html ]; then
+  echo "ERROR: frontend/dist/index.html missing after build"
+  exit 1
+fi
+
+echo "==> Building and starting containers (no Vite preview)"
 docker compose "${COMPOSE_FILES[@]}" up -d --build --remove-orphans
 
 echo "==> Waiting for PHP container"
@@ -40,6 +47,10 @@ for i in $(seq 1 60); do
   fi
   sleep 2
 done
+
+echo "==> Validating Nginx"
+docker compose "${COMPOSE_FILES[@]}" exec -T nginx nginx -t
+docker compose "${COMPOSE_FILES[@]}" exec -T nginx nginx -s reload || true
 
 echo "==> Clearing Laravel caches"
 docker compose "${COMPOSE_FILES[@]}" exec -T php php artisan config:clear || true
