@@ -37,6 +37,10 @@ if [ ! -f frontend/dist/index.html ]; then
   exit 1
 fi
 
+echo "==> Stopping any leftover Vite frontend container"
+docker compose "${COMPOSE_FILES[@]}" stop frontend >/dev/null 2>&1 || true
+docker compose "${COMPOSE_FILES[@]}" rm -f frontend >/dev/null 2>&1 || true
+
 echo "==> Building and starting containers (no Vite preview)"
 docker compose "${COMPOSE_FILES[@]}" up -d --build --remove-orphans
 
