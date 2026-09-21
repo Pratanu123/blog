@@ -159,6 +159,13 @@ In GitHub: **Settings → Secrets and variables → Actions**, create:
 
 The matching public key must be in the server’s `/root/.ssh/authorized_keys` (the bootstrap script does this).
 
+On the server, after `gh auth login`, you can push and set all secrets in one step:
+
+```bash
+cd /opt/blog
+./scripts/configure-github-secrets.sh
+```
+
 ### Flow
 
 ```text
