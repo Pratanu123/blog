@@ -169,6 +169,10 @@ export interface SiteSettings {
   newsletter_enabled?: string;
   allow_right_click?: string;
   robots_custom?: string;
+  ga4_measurement_id?: string;
+  google_site_verification?: string;
+  google_site_verification_filename?: string;
+  google_site_verification_file_content?: string;
 
   welcome_eyebrow?: string;
   welcome_title?: string;

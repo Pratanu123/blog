@@ -8,11 +8,15 @@ import type { SiteSettings } from "../types";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { JsonLd } from "../components/seo/JsonLd";
+import { GoogleAnalytics } from "../components/seo/GoogleAnalytics";
+import { DocumentHead } from "../components/seo/DocumentHead";
 import { NavConfettiLink } from "../components/nav/NavConfettiLink";
 import { useContentProtection } from "../hooks/useContentProtection";
+import { useScrollDepth } from "../hooks/useScrollDepth";
 import { InkVoltageMark } from "../components/brand/InkVoltageMark";
 import { InkVoltageWordmark } from "../components/brand/InkVoltageWordmark";
 import { lockBodyScroll, resetBodyScrollLock } from "../utils/bodyScrollLock";
+import { pageSectionFromPath, trackEvent } from "../utils/analytics";
 
 const nav = [
   ["Journal", "/blog"],
@@ -55,6 +59,13 @@ export function PublicLayout() {
 
   const allowRightClick = settings.allow_right_click === "1" || inspectUnlocked;
   useContentProtection(!allowRightClick);
+  useScrollDepth({
+    content_type: pageSectionFromPath(location.pathname),
+    content_id: location.pathname.startsWith("/blog/")
+      ? location.pathname.slice("/blog/".length)
+      : location.pathname,
+    page_path: location.pathname,
+  });
 
   useEffect(() => {
     publicService.settings().then(setSettings).catch(() => undefined);
@@ -118,6 +129,10 @@ export function PublicLayout() {
     event.preventDefault();
     if (q.trim()) {
       setMenuOpen(false);
+      trackEvent("search", {
+        page_section: pageSectionFromPath(location.pathname),
+        search_term_length: q.trim().length,
+      });
       navigate(`/search?q=${encodeURIComponent(q.trim())}`);
     }
   }
@@ -127,6 +142,9 @@ export function PublicLayout() {
     try {
       await publicService.newsletter(email);
       setEmail("");
+      trackEvent("newsletter_subscribe", {
+        page_section: pageSectionFromPath(location.pathname),
+      });
       push("You are on the list.");
     } catch (error) {
       push(getErrorMessage(error), "error");
@@ -135,9 +153,24 @@ export function PublicLayout() {
 
   const siteName = settings.site_name || "Ink & Voltage";
   const showAboutMeDispatchBirds = location.pathname.startsWith("/about-me");
+  const defaultOg = settings.default_og_image || "/logos/ink-voltage-og-1200x630.png";
+  const pagePath = `${location.pathname}${location.search}`;
 
   return (
     <div className="min-h-screen bg-ink-950 text-paper-50">
+      <GoogleAnalytics
+        measurementId={settings.ga4_measurement_id}
+        verificationMeta={settings.google_site_verification}
+      />
+      <DocumentHead
+        title={siteName}
+        description={settings.site_description}
+        canonical={pagePath === "/" ? settings.site_url || window.location.origin : `${(settings.site_url || window.location.origin).replace(/\/$/, "")}${location.pathname}`}
+        image={defaultOg}
+        siteName={siteName}
+        siteUrl={settings.site_url}
+        twitterHandle={settings.twitter_handle}
+      />
       <JsonLd
         data={[
           {

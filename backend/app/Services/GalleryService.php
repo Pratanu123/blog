@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\GalleryType;
+use App\Jobs\GenerateSitemap;
 use App\Models\GalleryWork;
 use App\Models\User;
 use App\Support\SlugGenerator;
@@ -17,6 +18,7 @@ class GalleryService
     public function __construct(
         private readonly SlugGenerator $slugs,
         private readonly AuditLogger $auditLogger,
+        private readonly CacheService $cache,
     ) {}
 
     public function paginate(GalleryType $type, array $filters, bool $publishedOnly = false): LengthAwarePaginator
@@ -60,6 +62,7 @@ class GalleryService
         ]);
 
         $this->auditLogger->record('gallery.created', $work, user: $actor);
+        $this->refreshPublicCaches();
 
         return $work->fresh('uploader');
     }
@@ -100,6 +103,7 @@ class GalleryService
         ])->save();
 
         $this->auditLogger->record('gallery.updated', $work, user: $actor);
+        $this->refreshPublicCaches();
 
         return $work->fresh('uploader');
     }
@@ -109,6 +113,13 @@ class GalleryService
         Storage::disk('public')->delete($work->path);
         $this->auditLogger->record('gallery.deleted', $work, ['title' => $work->title], user: $actor);
         $work->delete();
+        $this->refreshPublicCaches();
+    }
+
+    private function refreshPublicCaches(): void
+    {
+        $this->cache->flushListingCaches();
+        GenerateSitemap::dispatch();
     }
 
     /**

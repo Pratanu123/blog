@@ -3,10 +3,12 @@ import { createPortal } from "react-dom";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { publicService } from "../../services/public";
 import type { GalleryType, GalleryWork, SiteSettings } from "../../types";
+import { trackEvent } from "../../utils/analytics";
 import { PageBackLink } from "../../components/nav/PageBackLink";
 import { EngagementPanel } from "../../components/engagement/EngagementPanel";
 import { WatermarkedMedia } from "../../components/media/WatermarkedMedia";
 import { ShareBar } from "../../components/share/ShareBar";
+import { DocumentHead } from "../../components/seo/DocumentHead";
 import { Pagination } from "../../components/ui/Pagination";
 import { Spinner } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -76,9 +78,23 @@ export function GalleryPage({ type }: { type: GalleryType }) {
   function openWork(item: GalleryWork) {
     setActive(item);
     setSearchParams({ work: String(item.id) }, { replace: true });
+    trackEvent("gallery_work_open", {
+      content_type: type,
+      content_id: item.slug || item.id,
+      content_name: item.title,
+      work_id: item.id,
+    });
   }
 
   function closeWork() {
+    if (active) {
+      trackEvent("gallery_work_close", {
+        content_type: type,
+        content_id: active.slug || active.id,
+        content_name: active.title,
+        work_id: active.id,
+      });
+    }
     setActive(null);
     setSearchParams({}, { replace: true });
   }
@@ -91,6 +107,15 @@ export function GalleryPage({ type }: { type: GalleryType }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
+      <DocumentHead
+        title={`${meta.title} · ${settings.site_name || "Ink & Voltage"}`}
+        description={meta.body}
+        canonical={`${(settings.site_url || window.location.origin).replace(/\/$/, "")}${meta.path}`}
+        image={items[0]?.url || settings.default_og_image}
+        siteName={settings.site_name}
+        siteUrl={settings.site_url}
+        twitterHandle={settings.twitter_handle}
+      />
       <div className="mb-6 flex flex-wrap gap-3">
         <PageBackLink to="/" label="Back to Home" />
       </div>
@@ -191,6 +216,8 @@ export function GalleryPage({ type }: { type: GalleryType }) {
                       headline="Share this work"
                       body={`Pass this ${meta.eyebrow.toLowerCase()} along — link out to X or LinkedIn.`}
                       className="mt-2"
+                      contentType={type}
+                      contentId={active.slug || active.id}
                     />
                     <EngagementPanel type="gallery_work" id={active.id} className="pt-2" />
                     <div className="flex flex-wrap gap-2 pt-1">

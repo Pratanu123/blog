@@ -23,4 +23,12 @@ class SeoController extends Controller
     {
         return response($this->seo->rssXml(), 200)->header('Content-Type', 'application/rss+xml');
     }
+
+    public function googleVerification(string $file): Response
+    {
+        $body = $this->seo->googleVerificationHtml($file);
+        abort_unless($body !== null, 404);
+
+        return response($body, 200)->header('Content-Type', 'text/html; charset=UTF-8');
+    }
 }

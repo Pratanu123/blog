@@ -23,6 +23,12 @@ class SettingSeeder extends Seeder
             'allow_right_click' => '0',
             'robots_custom' => '',
 
+            // Analytics & Search Console (paste live IDs in CMS → Site basics / Analytics)
+            'ga4_measurement_id' => '',
+            'google_site_verification' => '',
+            'google_site_verification_filename' => '',
+            'google_site_verification_file_content' => '',
+
             'welcome_eyebrow' => 'You have arrived',
             'welcome_title' => 'Welcome to Ink & Voltage',
             'welcome_subtitle' => 'Choose a door. Each one leads somewhere the algorithm cannot invent for you.',

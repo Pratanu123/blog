@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
 import { publicService } from "../../services/public";
-import type { Article } from "../../types";
+import type { Article, SiteSettings } from "../../types";
 import { formatDate, readingLabel } from "../../utils/format";
 import { articleAuthorName } from "../../utils/articleAuthor";
+import { trackEvent } from "../../utils/analytics";
 import { ArticleCard } from "../../components/article/ArticleCard";
 import { EngagementPanel } from "../../components/engagement/EngagementPanel";
 import { JournalDragon } from "../../components/article/JournalDragon";
 import { ShareBar } from "../../components/share/ShareBar";
 import { JsonLd } from "../../components/seo/JsonLd";
+import { DocumentHead } from "../../components/seo/DocumentHead";
 import { Spinner } from "../../components/ui/Spinner";
 import { PageBackLink } from "../../components/nav/PageBackLink";
 import { EmptyState } from "../../components/ui/EmptyState";
 
 export function ArticlePage() {
   const { slug = "" } = useParams();
+  const { settings } = useOutletContext<{ settings: SiteSettings }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [error, setError] = useState(false);
 
@@ -25,17 +28,39 @@ export function ArticlePage() {
 
   useEffect(() => {
     if (!article) return;
-    document.title = article.meta_title || article.title;
-    const meta = document.querySelector('meta[name="description"]') || Object.assign(document.createElement("meta"), { name: "description" });
-    meta.setAttribute("content", article.meta_description || article.excerpt || "");
-    document.head.appendChild(meta);
+    trackEvent("journal_view", {
+      content_type: "journal_article",
+      content_id: article.slug,
+      content_name: article.title,
+      category: article.category?.name,
+    });
   }, [article]);
 
   if (error) return <div className="mx-auto max-w-3xl px-4 py-16"><EmptyState title="Story not found" body="This piece is unpublished or the slug has changed." /></div>;
   if (!article) return <Spinner />;
 
+  const siteUrl = (settings.site_url || window.location.origin).replace(/\/$/, "");
+  const pageUrl = `${siteUrl}/blog/${article.slug}`;
+  const title = article.meta_title || article.title;
+  const description = article.meta_description || article.excerpt || undefined;
+  const image =
+    article.og_image?.url ||
+    article.featured_image?.url ||
+    settings.default_og_image ||
+    "/logos/ink-voltage-og-1200x630.png";
+
   return (
     <div className="article-stage mx-auto max-w-6xl px-3 py-8 sm:px-4 sm:py-12">
+      <DocumentHead
+        title={`${title} · ${settings.site_name || "Ink & Voltage"}`}
+        description={description}
+        canonical={article.canonical_url || pageUrl}
+        image={image}
+        type="article"
+        siteName={settings.site_name}
+        siteUrl={settings.site_url}
+        twitterHandle={settings.twitter_handle}
+      />
       <JournalDragon />
       <article className="article-column relative z-[1] mx-auto max-w-3xl">
         <div className="mb-6 flex flex-wrap items-center gap-2 sm:mb-8 sm:gap-3">
@@ -91,7 +116,12 @@ export function ArticlePage() {
             </Link>
           ))}
         </div>
-        <ShareBar url={window.location.href} title={article.title} />
+        <ShareBar
+          url={pageUrl}
+          title={article.title}
+          contentType="journal_article"
+          contentId={article.slug}
+        />
 
         <EngagementPanel type="article" id={article.id} className="mt-12" />
 

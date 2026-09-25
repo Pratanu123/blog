@@ -1,4 +1,5 @@
 import { Linkedin } from "lucide-react";
+import { trackEvent } from "../../utils/analytics";
 
 function XLogo({ className }: { className?: string }) {
   return (
@@ -15,6 +16,8 @@ export function ShareBar({
   headline = "Share this piece",
   body = "Send it to someone who should read it — loud enough to cut through the feed.",
   className,
+  contentType,
+  contentId,
 }: {
   url: string;
   title: string;
@@ -22,11 +25,22 @@ export function ShareBar({
   headline?: string;
   body?: string;
   className?: string;
+  contentType?: string;
+  contentId?: string | number;
 }) {
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
   const xHref = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
   const linkedInHref = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+
+  function onShare(network: "x" | "linkedin") {
+    trackEvent("share_click", {
+      network,
+      content_type: contentType,
+      content_id: contentId,
+      content_name: title,
+    });
+  }
 
   return (
     <section
@@ -51,6 +65,7 @@ export function ShareBar({
             href={xHref}
             target="_blank"
             rel="noreferrer"
+            onClick={() => onShare("x")}
             className="share-bar-btn group inline-flex min-w-0 items-center justify-between gap-2 rounded-2xl bg-paper-50 px-3.5 py-3.5 text-ink-950 transition hover:-translate-y-0.5 hover:bg-white sm:gap-3 sm:px-5 sm:py-4"
           >
             <span className="inline-flex min-w-0 items-center gap-2.5 sm:gap-3">
@@ -72,6 +87,7 @@ export function ShareBar({
             href={linkedInHref}
             target="_blank"
             rel="noreferrer"
+            onClick={() => onShare("linkedin")}
             className="share-bar-btn group inline-flex min-w-0 items-center justify-between gap-2 rounded-2xl bg-[#0A66C2] px-3.5 py-3.5 text-white transition hover:-translate-y-0.5 hover:brightness-110 sm:gap-3 sm:px-5 sm:py-4"
           >
             <span className="inline-flex min-w-0 items-center gap-2.5 sm:gap-3">
