@@ -17,11 +17,12 @@ class SeoService
 
     public function sitemapXml(): string
     {
-        return Cache::remember('cms.sitemap', 1800, fn () => $this->buildSitemap());
+        return Cache::remember(CacheService::SITEMAP, 1800, fn () => $this->buildSitemap());
     }
 
     public function refreshSitemap(): string
     {
+        Cache::forget(CacheService::SITEMAP);
         Cache::forget('cms.sitemap');
 
         return $this->sitemapXml();
@@ -29,9 +30,9 @@ class SeoService
 
     public function robotsTxt(): string
     {
-        return Cache::remember('cms.robots', 3600, function () {
+        return Cache::remember(CacheService::ROBOTS, 3600, function () {
+            $base = $this->settings->siteUrl();
             $custom = trim((string) $this->settings->get('robots_custom', ''));
-            $base = rtrim((string) $this->settings->get('site_url', config('app.url')), '/');
 
             $default = implode("\n", [
                 'User-agent: *',
@@ -59,12 +60,12 @@ class SeoService
 
     public function rssXml(): string
     {
-        return Cache::remember('cms.rss', 900, fn () => $this->buildRss());
+        return Cache::remember(CacheService::RSS, 900, fn () => $this->buildRss());
     }
 
     private function buildSitemap(): string
     {
-        $base = rtrim((string) $this->settings->get('site_url', config('app.url')), '/');
+        $base = $this->settings->siteUrl();
         $photoUpdated = GalleryWork::query()
             ->where('type', GalleryType::Photography)
             ->where('is_published', true)
@@ -149,7 +150,7 @@ class SeoService
     private function buildRss(): string
     {
         $siteName = e((string) $this->settings->get('site_name', config('app.name')));
-        $siteUrl = rtrim((string) $this->settings->get('site_url', config('app.url')), '/');
+        $siteUrl = $this->settings->siteUrl();
         $description = e((string) $this->settings->get('site_description', 'A modern editorial blog.'));
 
         $items = '';

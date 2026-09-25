@@ -126,7 +126,10 @@ export function SettingsPage() {
               <Field label="Description">
                 <Textarea value={settings.site_description || ""} onChange={(e) => setSettings({ ...settings, site_description: e.target.value })} />
               </Field>
-              <Field label="Site URL">
+              <Field
+                label="Site URL"
+                hint="Use your live HTTPS origin (e.g. https://inkandvoltage.com). If this is left as localhost, sitemap/robots fall back to the server APP_URL."
+              >
                 <Input value={settings.site_url || ""} onChange={(e) => setSettings({ ...settings, site_url: e.target.value })} />
               </Field>
               <Field label="Default OG image" hint="Public path or https URL used when a page has no custom share image.">
