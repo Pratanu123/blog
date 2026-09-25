@@ -40,6 +40,10 @@ export const mediaService = {
     });
     return data.data as MediaItem;
   },
+  async update(id: number, payload: { alt_text?: string | null }) {
+    const { data } = await api.put(`/media/${id}`, payload);
+    return data.data as MediaItem;
+  },
   async destroy(id: number) {
     await api.delete(`/media/${id}`);
   },

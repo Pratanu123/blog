@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { articleService } from "../../services/articles";
-import { taxonomyService } from "../../services/admin";
+import { mediaService, taxonomyService } from "../../services/admin";
 import type { Article, ArticleRevision, Category, MediaItem, Tag } from "../../types";
 import { getErrorMessage } from "../../services/api";
 import { useToast } from "../../contexts/ToastContext";
@@ -180,6 +180,11 @@ export function ArticleEditorPage() {
   async function save(status = article.status, silent = false) {
     setSaving(true);
     try {
+      if (article.featured_image?.id) {
+        await mediaService.update(article.featured_image.id, {
+          alt_text: article.featured_image.alt_text?.trim() || null,
+        });
+      }
       const saved = await articleService.save(payload(status), id ? Number(id) : undefined);
       setArticle(saved);
       if (!id) navigate(`/admin/articles/${saved.id}`, { replace: true });
@@ -383,6 +388,25 @@ export function ArticleEditorPage() {
                 </Button>
               ) : null}
             </div>
+            {article.featured_image ? (
+              <div className="mt-3">
+                <Field label="Alt text" hint="Describe the image for accessibility and SEO. Saved with the media file.">
+                  <Input
+                    value={article.featured_image.alt_text || ""}
+                    maxLength={180}
+                    onChange={(e) =>
+                      setArticle((current) => ({
+                        ...current,
+                        featured_image: current.featured_image
+                          ? { ...current.featured_image, alt_text: e.target.value }
+                          : null,
+                      }))
+                    }
+                    placeholder="e.g. Desk lamp beside an open notebook"
+                  />
+                </Field>
+              </div>
+            ) : null}
           </Card>
           <Card>
             <p className="mb-3 text-sm font-medium">SEO for organic reach</p>

@@ -30,10 +30,10 @@ export function ShareBar({
 
   return (
     <section
-      className={`overflow-hidden rounded-[1.75rem] border-2 border-ink-900 bg-ink-950 text-paper-50 shadow-[0_18px_40px_-24px_rgba(0,0,0,0.65)] dark:border-paper-50/30 ${className ?? "mt-10"}`}
+      className={`share-bar overflow-hidden rounded-[1.75rem] border-2 border-ink-900 bg-ink-950 text-paper-50 shadow-[0_18px_40px_-24px_rgba(0,0,0,0.65)] dark:border-paper-50/30 ${className ?? "mt-10"}`}
     >
       <div className="grid gap-0 md:grid-cols-[1.1fr_1fr]">
-        <div className="relative overflow-hidden border-b-2 border-ink-800 px-6 py-7 md:border-b-0 md:border-r-2 md:border-ink-800">
+        <div className="relative overflow-hidden border-b-2 border-ink-800 px-5 py-6 sm:px-6 sm:py-7 md:border-b-0 md:border-r-2 md:border-ink-800">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 opacity-40"
@@ -43,43 +43,51 @@ export function ShareBar({
             }}
           />
           <p className="relative text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-rust-400">{eyebrow}</p>
-          <h2 className="relative mt-3 font-display text-3xl leading-[0.95] sm:text-4xl md:text-5xl">{headline}</h2>
+          <h2 className="relative mt-3 font-display text-[1.85rem] leading-[0.95] sm:text-4xl md:text-5xl">{headline}</h2>
           <p className="relative mt-3 max-w-sm text-sm leading-6 text-paper-100/70">{body}</p>
         </div>
-        <div className="flex flex-col justify-center gap-3 p-5 sm:p-6">
+        <div className="flex min-w-0 flex-col justify-center gap-3 p-4 sm:p-6">
           <a
             href={xHref}
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex items-center justify-between gap-3 rounded-2xl bg-paper-50 px-5 py-4 text-ink-950 transition hover:-translate-y-0.5 hover:bg-white"
+            className="share-bar-btn group inline-flex min-w-0 items-center justify-between gap-2 rounded-2xl bg-paper-50 px-3.5 py-3.5 text-ink-950 transition hover:-translate-y-0.5 hover:bg-white sm:gap-3 sm:px-5 sm:py-4"
           >
-            <span className="inline-flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-ink-950 text-paper-50">
+            <span className="inline-flex min-w-0 items-center gap-2.5 sm:gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ink-950 text-paper-50 sm:h-11 sm:w-11">
                 <XLogo className="h-5 w-5" />
               </span>
-              <span>
-                <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-ink-700/70">Share on</span>
-                <span className="font-display text-2xl leading-none">X</span>
+              <span className="min-w-0">
+                <span className="block text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-700/70 sm:text-xs sm:tracking-[0.2em]">
+                  Share on
+                </span>
+                <span className="font-display text-xl leading-none sm:text-2xl">X</span>
               </span>
             </span>
-            <span className="text-sm font-semibold text-rust-600 transition group-hover:translate-x-0.5">Open →</span>
+            <span className="share-bar-cta shrink-0 text-sm font-semibold text-rust-600 transition group-hover:translate-x-0.5">
+              Open →
+            </span>
           </a>
           <a
             href={linkedInHref}
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex items-center justify-between gap-3 rounded-2xl bg-[#0A66C2] px-5 py-4 text-white transition hover:-translate-y-0.5 hover:brightness-110"
+            className="share-bar-btn group inline-flex min-w-0 items-center justify-between gap-2 rounded-2xl bg-[#0A66C2] px-3.5 py-3.5 text-white transition hover:-translate-y-0.5 hover:brightness-110 sm:gap-3 sm:px-5 sm:py-4"
           >
-            <span className="inline-flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/15">
+            <span className="inline-flex min-w-0 items-center gap-2.5 sm:gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/15 sm:h-11 sm:w-11">
                 <Linkedin className="h-5 w-5" aria-hidden />
               </span>
-              <span>
-                <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/70">Share on</span>
-                <span className="font-display text-2xl leading-none">LinkedIn</span>
+              <span className="min-w-0">
+                <span className="block text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-xs sm:tracking-[0.2em]">
+                  Share on
+                </span>
+                <span className="font-display text-xl leading-none sm:text-2xl">LinkedIn</span>
               </span>
             </span>
-            <span className="text-sm font-semibold transition group-hover:translate-x-0.5">Open →</span>
+            <span className="share-bar-cta shrink-0 text-sm font-semibold transition group-hover:translate-x-0.5">
+              Open →
+            </span>
           </a>
         </div>
       </div>

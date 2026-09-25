@@ -63,6 +63,14 @@ class UpdateSettingRequest extends FormRequest
             'dispatch_subtitle' => ['nullable', 'string', 'max:400'],
             'dispatch_placeholder' => ['nullable', 'string', 'max:120'],
             'dispatch_button_label' => ['nullable', 'string', 'max:80'],
+
+            // Photography / Painting gallery pages
+            'photography_eyebrow' => ['nullable', 'string', 'max:120'],
+            'photography_title' => ['nullable', 'string', 'max:200'],
+            'photography_body' => ['nullable', 'string', 'max:800'],
+            'painting_eyebrow' => ['nullable', 'string', 'max:120'],
+            'painting_title' => ['nullable', 'string', 'max:200'],
+            'painting_body' => ['nullable', 'string', 'max:800'],
         ];
     }
 }

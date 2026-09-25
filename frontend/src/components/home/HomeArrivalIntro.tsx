@@ -55,15 +55,18 @@ function LetterContent({ showButton, onSwoop }: { showButton: boolean; onSwoop: 
 
 export function HomeArrivalIntro({
   onReveal,
+  onLetterSeen,
   onComplete,
 }: {
   onReveal: () => void;
+  onLetterSeen?: () => void;
   onComplete: () => void;
 }) {
   const [phase, setPhase] = useState<IntroPhase>("fly");
   const [mounted, setMounted] = useState(false);
   const [origin, setOrigin] = useState<LetterOrigin | null>(null);
   const emergingRef = useRef<HTMLElement | null>(null);
+  const letterSeenRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -104,6 +107,15 @@ export function HomeArrivalIntro({
     return () => window.clearTimeout(letterTimer);
   }, [phase]);
 
+  // Once the letter is on screen, never replay it in this tab — even if the user
+  // navigates away before SWOOPISH / doors finish.
+  useEffect(() => {
+    if (phase !== "letter" && phase !== "doors") return;
+    if (letterSeenRef.current) return;
+    letterSeenRef.current = true;
+    onLetterSeen?.();
+  }, [phase, onLetterSeen]);
+
   useEffect(() => {
     if (phase !== "doors") return;
     onReveal();
@@ -117,6 +129,15 @@ export function HomeArrivalIntro({
     );
     return () => window.clearTimeout(doneTimer);
   }, [phase, onReveal, onComplete]);
+
+  // If the intro unmounts after the letter was shown (back / logo tap), still mark complete path.
+  useEffect(() => {
+    return () => {
+      if (letterSeenRef.current) {
+        onLetterSeen?.();
+      }
+    };
+  }, [onLetterSeen]);
 
   if (!mounted || phase === "done") return null;
 

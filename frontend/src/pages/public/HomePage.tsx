@@ -35,7 +35,23 @@ export function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const revealHall = useCallback(() => setHallRevealed(true), []);
+  // If storage was set while this page was unmounted, skip the letter on remount.
+  useEffect(() => {
+    if (hasSeenArrival()) {
+      setIntroDone(true);
+      setHallRevealed(true);
+    }
+  }, []);
+
+  const revealHall = useCallback(() => {
+    markArrivalSeen();
+    setHallRevealed(true);
+  }, []);
+
+  const noteLetterSeen = useCallback(() => {
+    markArrivalSeen();
+  }, []);
+
   const finishIntro = useCallback(() => {
     markArrivalSeen();
     setIntroDone(true);
@@ -44,7 +60,9 @@ export function HomePage() {
 
   return (
     <div className="home-page-shell">
-      {!introDone ? <HomeArrivalIntro onReveal={revealHall} onComplete={finishIntro} /> : null}
+      {!introDone ? (
+        <HomeArrivalIntro onReveal={revealHall} onLetterSeen={noteLetterSeen} onComplete={finishIntro} />
+      ) : null}
 
       {loading && !hallRevealed ? (
         <div className="flex min-h-[50vh] items-center justify-center">
