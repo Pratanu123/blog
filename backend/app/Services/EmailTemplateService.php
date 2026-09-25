@@ -94,7 +94,7 @@ class EmailTemplateService
             'year' => (string) now()->year,
             'logo_url' => $logoSrc,
             'logo_block' => $logoBlock,
-            'site_url' => rtrim((string) ($this->settings->get('site_url') ?: config('app.url')), '/'),
+            'site_url' => $this->settings->siteUrl(),
         ];
 
         $rendered = $this->mail->render($template->subject, $template->html_body, array_merge($defaults, $vars, [

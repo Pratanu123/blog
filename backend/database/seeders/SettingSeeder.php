@@ -12,7 +12,7 @@ class SettingSeeder extends Seeder
         $settings = [
             'site_name' => 'Ink & Voltage',
             'site_description' => 'A modern editorial magazine for software, design, and the systems that hold them together.',
-            'site_url' => 'http://localhost',
+            'site_url' => rtrim((string) env('APP_URL', 'http://localhost'), '/'),
             'organization_name' => 'Ink & Voltage',
             'organization_logo' => '/logos/ink-voltage-mark-512.png',
             'email_logo_url' => '/logos/ink-voltage-mark-148.png',
@@ -81,7 +81,8 @@ class SettingSeeder extends Seeder
         ];
 
         foreach ($settings as $key => $value) {
-            Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
+            // Never clobber CMS edits (especially production site_url) on re-seed.
+            Setting::query()->firstOrCreate(['key' => $key], ['value' => $value]);
         }
     }
 }
