@@ -9,7 +9,16 @@ import { Card } from "../../components/ui/Card";
 import { formatRelative } from "../../utils/format";
 import { DEFAULT_DOORS, DEFAULT_THOUGHTS, inspirationThoughts, welcomeDoors } from "../../utils/siteContent";
 
-type Tab = "site" | "welcome" | "inspiration" | "about-me" | "contact" | "dispatch";
+type Tab =
+  | "site"
+  | "welcome"
+  | "inspiration"
+  | "about-me"
+  | "contact"
+  | "dispatch"
+  | "photography"
+  | "painting"
+  | "analytics";
 
 function ensureDoors(settings: SiteSettings): WelcomeDoor[] {
   return welcomeDoors(settings).map((door) => ({ ...door }));
@@ -70,8 +79,11 @@ export function SettingsPage() {
     { id: "welcome", label: "Welcome Hall" },
     { id: "inspiration", label: "Blog Inspiration" },
     { id: "about-me", label: "About Me" },
+    { id: "photography", label: "Photography" },
+    { id: "painting", label: "Painting" },
     { id: "contact", label: "Contact Us" },
     { id: "dispatch", label: "Sunday Dispatch" },
+    { id: "analytics", label: "Analytics & Search" },
     { id: "site", label: "Site basics" },
   ];
 
@@ -81,8 +93,8 @@ export function SettingsPage() {
         <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">CMS</p>
         <h1 className="font-display text-3xl sm:text-4xl">Site pages</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-          Edit the Welcome Hall, Blog Inspiration, About Me, Contact, and Sunday Dispatch copy here.
-          Add or remove text blocks and doors — then save.
+          Edit the Welcome Hall, Blog Inspiration, About Me, Photography, Painting, Contact, Sunday Dispatch,
+          Analytics & Search Console, and site basics here. Add or remove text blocks and doors — then save.
         </p>
       </div>
 
@@ -116,6 +128,20 @@ export function SettingsPage() {
               </Field>
               <Field label="Site URL">
                 <Input value={settings.site_url || ""} onChange={(e) => setSettings({ ...settings, site_url: e.target.value })} />
+              </Field>
+              <Field label="Default OG image" hint="Public path or https URL used when a page has no custom share image.">
+                <Input
+                  value={settings.default_og_image || ""}
+                  onChange={(e) => setSettings({ ...settings, default_og_image: e.target.value })}
+                  placeholder="/logos/ink-voltage-og-1200x630.png"
+                />
+              </Field>
+              <Field label="Twitter / X handle">
+                <Input
+                  value={settings.twitter_handle || ""}
+                  onChange={(e) => setSettings({ ...settings, twitter_handle: e.target.value })}
+                  placeholder="@inkvoltage"
+                />
               </Field>
               <Field label="Organization">
                 <Input value={settings.organization_name || ""} onChange={(e) => setSettings({ ...settings, organization_name: e.target.value })} />
@@ -152,6 +178,62 @@ export function SettingsPage() {
                   </span>
                 </span>
               </label>
+            </>
+          ) : null}
+
+          {tab === "analytics" ? (
+            <>
+              <h2 className="font-display text-2xl">Analytics & Search Console</h2>
+              <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                Tracking runs on the public site only (journal, galleries, About Me puzzle, etc.). Admin pages are never tracked.
+                After you publish a journal piece or gallery work, <code className="text-xs">/sitemap.xml</code> refreshes
+                automatically (and again hourly).
+              </p>
+              <Field
+                label="GA4 Measurement ID"
+                hint="From Google Analytics → Admin → Data streams → Web. Example: G-XXXXXXXXXX"
+              >
+                <Input
+                  value={settings.ga4_measurement_id || ""}
+                  onChange={(e) => setSettings({ ...settings, ga4_measurement_id: e.target.value.trim() })}
+                  placeholder="G-XXXXXXXXXX"
+                />
+              </Field>
+              <Field
+                label="Search Console meta verification"
+                hint="Optional backup. Prefer the HTML file method below for this SPA."
+              >
+                <Input
+                  value={settings.google_site_verification || ""}
+                  onChange={(e) => setSettings({ ...settings, google_site_verification: e.target.value.trim() })}
+                  placeholder="google-site-verification content value"
+                />
+              </Field>
+              <Field
+                label="Verification filename"
+                hint="Exact filename Google gives you, e.g. google1234567890abcdef.html"
+              >
+                <Input
+                  value={settings.google_site_verification_filename || ""}
+                  onChange={(e) =>
+                    setSettings({ ...settings, google_site_verification_filename: e.target.value.trim() })
+                  }
+                  placeholder="googleXXXXXXXX.html"
+                />
+              </Field>
+              <Field
+                label="Verification file contents"
+                hint="Paste the full file body Google provides. Served at https://yoursite.com/google….html"
+              >
+                <Textarea
+                  value={settings.google_site_verification_file_content || ""}
+                  onChange={(e) =>
+                    setSettings({ ...settings, google_site_verification_file_content: e.target.value })
+                  }
+                  rows={4}
+                  placeholder="google-site-verification: …"
+                />
+              </Field>
             </>
           ) : null}
 
@@ -310,6 +392,64 @@ export function SettingsPage() {
               </Field>
               <Field label="Inbox email">
                 <Input value={settings.contact_email || ""} onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })} />
+              </Field>
+            </>
+          ) : null}
+
+          {tab === "photography" ? (
+            <>
+              <h2 className="font-display text-2xl">Photography</h2>
+              <p className="text-sm text-zinc-500">Static intro copy for the public Photography gallery page.</p>
+              <Field label="Eyebrow">
+                <Input
+                  value={settings.photography_eyebrow || ""}
+                  onChange={(e) => setSettings({ ...settings, photography_eyebrow: e.target.value })}
+                  placeholder="Photography"
+                />
+              </Field>
+              <Field label="Title">
+                <Input
+                  value={settings.photography_title || ""}
+                  onChange={(e) => setSettings({ ...settings, photography_title: e.target.value })}
+                  placeholder="Light, place, and the frame around both."
+                />
+              </Field>
+              <Field label="Intro">
+                <Textarea
+                  value={settings.photography_body || ""}
+                  onChange={(e) => setSettings({ ...settings, photography_body: e.target.value })}
+                  rows={4}
+                  placeholder="A separate gallery of photographs — each with its own ALT text, short caption, and description."
+                />
+              </Field>
+            </>
+          ) : null}
+
+          {tab === "painting" ? (
+            <>
+              <h2 className="font-display text-2xl">Painting</h2>
+              <p className="text-sm text-zinc-500">Static intro copy for the public Painting gallery page.</p>
+              <Field label="Eyebrow">
+                <Input
+                  value={settings.painting_eyebrow || ""}
+                  onChange={(e) => setSettings({ ...settings, painting_eyebrow: e.target.value })}
+                  placeholder="Painting"
+                />
+              </Field>
+              <Field label="Title">
+                <Input
+                  value={settings.painting_title || ""}
+                  onChange={(e) => setSettings({ ...settings, painting_title: e.target.value })}
+                  placeholder="Color held still long enough to look twice."
+                />
+              </Field>
+              <Field label="Intro">
+                <Textarea
+                  value={settings.painting_body || ""}
+                  onChange={(e) => setSettings({ ...settings, painting_body: e.target.value })}
+                  rows={4}
+                  placeholder="A separate gallery of paintings — each with its own ALT text, short caption, and description."
+                />
               </Field>
             </>
           ) : null}

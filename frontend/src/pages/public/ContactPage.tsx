@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button";
 import { Field, Input, Textarea } from "../../components/ui/Input";
 import { WelcomeForest } from "../../components/home/WelcomeForest";
 import { PageBackLink } from "../../components/nav/PageBackLink";
+import { trackEvent } from "../../utils/analytics";
 
 const SPIT_CYCLE_MS = 5000;
 
@@ -140,6 +141,7 @@ export function ContactPage() {
     try {
       await publicService.contact(form);
       setForm({ name: "", email: "", message: "" });
+      trackEvent("contact_submit", { content_type: "contact" });
       push(successMessage);
     } catch (error) {
       push(getErrorMessage(error), "error");

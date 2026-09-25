@@ -19,7 +19,7 @@ class PublicContentService
 
     public function settings(): array
     {
-        return $this->settings->all();
+        return $this->publicSettings();
     }
 
     public function homepage(): array
@@ -44,7 +44,7 @@ class PublicContentService
             $categories = Category::query()->whereNull('parent_id')->with('children')->orderBy('name')->get();
 
             return [
-                'settings' => $this->settings->all(),
+                'settings' => $this->publicSettings(),
                 'featured' => ArticleCardResource::collection($featured)->resolve(),
                 'latest' => ArticleCardResource::collection($latest)->resolve(),
                 'popular' => ArticleCardResource::collection($popular)->resolve(),
@@ -151,5 +151,13 @@ class PublicContentService
     private function cardRelations(): array
     {
         return ['author:id,name,slug,avatar', 'category:id,name,slug', 'featuredImage', 'tags:id,name,slug'];
+    }
+
+    private function publicSettings(): array
+    {
+        $settings = $this->settings->all();
+        unset($settings['google_site_verification_file_content']);
+
+        return $settings;
     }
 }

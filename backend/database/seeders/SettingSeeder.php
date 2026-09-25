@@ -23,6 +23,12 @@ class SettingSeeder extends Seeder
             'allow_right_click' => '0',
             'robots_custom' => '',
 
+            // Analytics & Search Console (paste live IDs in CMS → Site basics / Analytics)
+            'ga4_measurement_id' => '',
+            'google_site_verification' => '',
+            'google_site_verification_filename' => '',
+            'google_site_verification_file_content' => '',
+
             'welcome_eyebrow' => 'You have arrived',
             'welcome_title' => 'Welcome to Ink & Voltage',
             'welcome_subtitle' => 'Choose a door. Each one leads somewhere the algorithm cannot invent for you.',
@@ -65,6 +71,13 @@ class SettingSeeder extends Seeder
             'dispatch_subtitle' => 'One letter. No noise. Unsubscribe whenever the weather changes.',
             'dispatch_placeholder' => 'you@example.com',
             'dispatch_button_label' => 'Subscribe',
+
+            'photography_eyebrow' => 'Photography',
+            'photography_title' => 'Light, place, and the frame around both.',
+            'photography_body' => 'A separate gallery of photographs — each with its own ALT text, short caption, and description.',
+            'painting_eyebrow' => 'Painting',
+            'painting_title' => 'Color held still long enough to look twice.',
+            'painting_body' => 'A separate gallery of paintings — each with its own ALT text, short caption, and description.',
         ];
 
         foreach ($settings as $key => $value) {

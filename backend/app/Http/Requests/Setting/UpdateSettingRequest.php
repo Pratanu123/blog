@@ -27,6 +27,12 @@ class UpdateSettingRequest extends FormRequest
             'allow_right_click' => ['nullable', 'string', 'max:10'],
             'robots_custom' => ['nullable', 'string'],
 
+            // Analytics & Search Console
+            'ga4_measurement_id' => ['nullable', 'string', 'max:32', 'regex:/^(G-[A-Z0-9]+)?$/i'],
+            'google_site_verification' => ['nullable', 'string', 'max:120'],
+            'google_site_verification_filename' => ['nullable', 'string', 'max:80', 'regex:/^(google[a-z0-9]+\.html)?$/i'],
+            'google_site_verification_file_content' => ['nullable', 'string', 'max:2000'],
+
             // Welcome Hall
             'welcome_eyebrow' => ['nullable', 'string', 'max:120'],
             'welcome_title' => ['nullable', 'string', 'max:200'],
@@ -63,6 +69,14 @@ class UpdateSettingRequest extends FormRequest
             'dispatch_subtitle' => ['nullable', 'string', 'max:400'],
             'dispatch_placeholder' => ['nullable', 'string', 'max:120'],
             'dispatch_button_label' => ['nullable', 'string', 'max:80'],
+
+            // Photography / Painting gallery pages
+            'photography_eyebrow' => ['nullable', 'string', 'max:120'],
+            'photography_title' => ['nullable', 'string', 'max:200'],
+            'photography_body' => ['nullable', 'string', 'max:800'],
+            'painting_eyebrow' => ['nullable', 'string', 'max:120'],
+            'painting_title' => ['nullable', 'string', 'max:200'],
+            'painting_body' => ['nullable', 'string', 'max:800'],
         ];
     }
 }

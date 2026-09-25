@@ -2,6 +2,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useOutletContext } from "react-router-dom";
 import type { SiteSettings } from "../../types";
 import { PageBackLink } from "../../components/nav/PageBackLink";
+import { DocumentHead } from "../../components/seo/DocumentHead";
+import { getAnalyticsSessionId, trackEvent } from "../../utils/analytics";
 
 const COLS = 4;
 const ROWS = 2;
@@ -397,6 +399,8 @@ export function AboutMePage() {
   const body = (settings.about_me_content || "").trim() || FALLBACK_ABOUT_ME;
   const name = settings.organization_name || settings.site_name || "Ink & Voltage";
   const texts = useMemo(() => splitIntoPieces(body), [body]);
+  const puzzleSessionId = useMemo(() => getAnalyticsSessionId("inkvoltage.puzzle.session"), []);
+  const puzzleStartedRef = useRef(false);
 
   const playfieldRef = useRef<HTMLDivElement>(null);
   const slotRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -465,6 +469,11 @@ export function AboutMePage() {
     setReadingId(null);
     setCelebrating(true);
     setCelebrationFading(false);
+    trackEvent("about_me_puzzle_solved", {
+      content_type: "about_me",
+      puzzle_session_id: puzzleSessionId,
+      pieces_placed: PIECE_COUNT,
+    });
     setConfetti(
       Array.from({ length: 90 }, (_, id) => ({
         id,
@@ -518,6 +527,13 @@ export function AboutMePage() {
 
   const onPointerDown = (event: React.PointerEvent<HTMLButtonElement>, id: number) => {
     if (solved || celebrating) return;
+    if (!puzzleStartedRef.current) {
+      puzzleStartedRef.current = true;
+      trackEvent("about_me_puzzle_start", {
+        content_type: "about_me",
+        puzzle_session_id: puzzleSessionId,
+      });
+    }
     const piece = piecesRef.current.find((item) => item.id === id);
     const field = playfieldRef.current;
     if (!piece || !field || piece.placed) return;
@@ -623,6 +639,12 @@ export function AboutMePage() {
           item.id === id ? { ...item, placed: true, x: home.x, y: home.y, rot: 0 } : item,
         ),
       );
+      trackEvent("about_me_puzzle_piece_placed", {
+        content_type: "about_me",
+        puzzle_session_id: puzzleSessionId,
+        piece_id: id,
+        pieces_placed: placedCount + 1,
+      });
       return;
     }
 
@@ -642,6 +664,13 @@ export function AboutMePage() {
   };
 
   function resetPuzzle() {
+    trackEvent("about_me_puzzle_reset", {
+      content_type: "about_me",
+      puzzle_session_id: puzzleSessionId,
+      pieces_placed: placedCount,
+      was_solved: solved,
+    });
+    puzzleStartedRef.current = false;
     setSolved(false);
     setCelebrating(false);
     setCelebrationFading(false);
@@ -660,6 +689,15 @@ export function AboutMePage() {
 
   return (
     <div className="relative min-h-[calc(100vh-4.5rem)] overflow-x-clip bg-ink-950">
+      <DocumentHead
+        title={`About Me · ${settings.site_name || "Ink & Voltage"}`}
+        description={settings.about_me_letter || settings.site_description}
+        canonical={`${(settings.site_url || window.location.origin).replace(/\/$/, "")}/about-me`}
+        image={settings.default_og_image}
+        siteName={settings.site_name}
+        siteUrl={settings.site_url}
+        twitterHandle={settings.twitter_handle}
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(196,92,38,0.14),transparent_48%)]"

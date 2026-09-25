@@ -169,6 +169,10 @@ export interface SiteSettings {
   newsletter_enabled?: string;
   allow_right_click?: string;
   robots_custom?: string;
+  ga4_measurement_id?: string;
+  google_site_verification?: string;
+  google_site_verification_filename?: string;
+  google_site_verification_file_content?: string;
 
   welcome_eyebrow?: string;
   welcome_title?: string;
@@ -195,6 +199,13 @@ export interface SiteSettings {
   dispatch_subtitle?: string;
   dispatch_placeholder?: string;
   dispatch_button_label?: string;
+
+  photography_eyebrow?: string;
+  photography_title?: string;
+  photography_body?: string;
+  painting_eyebrow?: string;
+  painting_title?: string;
+  painting_body?: string;
 }
 
 export interface AuditLog {

@@ -7539,6 +7539,22 @@ html.content-protected--flash::after {
     max-width: calc(100% - 9rem);
   }
 
+  /* Share bar: use full stage width so X / LinkedIn buttons don't crush together */
+  .article-column .share-bar {
+    width: calc(100vw - 1.5rem);
+    max-width: calc(100vw - 1.5rem);
+    margin-left: calc(50% - 50vw + 0.75rem);
+    margin-right: calc(50% - 50vw + 0.75rem);
+  }
+
+  .share-bar-btn {
+    gap: 0.5rem;
+  }
+
+  .share-bar-cta {
+    display: none;
+  }
+
   .journal-dragon-scene {
     position: fixed;
     inset: 0;

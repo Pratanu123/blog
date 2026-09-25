@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\GalleryType;
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\GalleryWork;
 use App\Models\Tag;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class SeoService
@@ -42,6 +45,18 @@ class SeoService
         });
     }
 
+    public function googleVerificationHtml(string $filename): ?string
+    {
+        $expected = trim((string) $this->settings->get('google_site_verification_filename', ''));
+        $content = (string) $this->settings->get('google_site_verification_file_content', '');
+
+        if ($expected === '' || $content === '' || strcasecmp($expected, $filename) !== 0) {
+            return null;
+        }
+
+        return $content;
+    }
+
     public function rssXml(): string
     {
         return Cache::remember('cms.rss', 900, fn () => $this->buildRss());
@@ -50,9 +65,30 @@ class SeoService
     private function buildSitemap(): string
     {
         $base = rtrim((string) $this->settings->get('site_url', config('app.url')), '/');
+        $photoUpdated = GalleryWork::query()
+            ->where('type', GalleryType::Photography)
+            ->where('is_published', true)
+            ->max('updated_at');
+        $paintUpdated = GalleryWork::query()
+            ->where('type', GalleryType::Painting)
+            ->where('is_published', true)
+            ->max('updated_at');
+
         $urls = [
             ['loc' => $base.'/', 'changefreq' => 'daily', 'priority' => '1.0'],
             ['loc' => $base.'/blog', 'changefreq' => 'daily', 'priority' => '0.9'],
+            [
+                'loc' => $base.'/photography',
+                'lastmod' => $photoUpdated ? Carbon::parse($photoUpdated)->toAtomString() : null,
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => $base.'/painting',
+                'lastmod' => $paintUpdated ? Carbon::parse($paintUpdated)->toAtomString() : null,
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ],
             ['loc' => $base.'/about', 'changefreq' => 'monthly', 'priority' => '0.4'],
             ['loc' => $base.'/about-me', 'changefreq' => 'monthly', 'priority' => '0.4'],
             ['loc' => $base.'/contact', 'changefreq' => 'monthly', 'priority' => '0.3'],

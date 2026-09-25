@@ -107,7 +107,7 @@ export function GalleryAdminPage({ type }: { type: GalleryType }) {
           <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Gallery</p>
           <h1 className="font-display text-3xl sm:text-4xl">{label}</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            Upload {type === "photography" ? "photographs" : "paintings"} with ALT text, short description, and full image description.
+            Upload {type === "photography" ? "photographs" : "paintings"} with ALT text, an image description for the gallery page, and a short description for the opened view.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -138,7 +138,8 @@ export function GalleryAdminPage({ type }: { type: GalleryType }) {
                   <p className="text-xs text-zinc-500">{item.is_published ? "Published" : "Draft"} · order {item.sort_order}</p>
                 </div>
               </div>
-              {item.short_description ? <p className="text-sm text-zinc-600 dark:text-paper-100/70">{item.short_description}</p> : null}
+              {item.description ? <p className="text-sm text-zinc-600 dark:text-paper-100/70 line-clamp-2">{item.description}</p> : null}
+              {item.short_description ? <p className="text-xs text-zinc-500 line-clamp-1">Open: {item.short_description}</p> : null}
               <p className="truncate text-xs text-zinc-500">ALT: {item.alt_text || "—"}</p>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => openEdit(item)}>Edit</Button>
@@ -179,10 +180,10 @@ export function GalleryAdminPage({ type }: { type: GalleryType }) {
           <Field label="Title">
             <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required maxLength={180} />
           </Field>
-          <Field label="Short description" hint="Shown under the image in the gallery grid.">
+          <Field label="Short description" hint="Shown under the title when someone opens the image.">
             <Textarea value={form.short_description} onChange={(e) => setForm({ ...form, short_description: e.target.value })} maxLength={300} />
           </Field>
-          <Field label="Image description" hint="Longer description for the work detail.">
+          <Field label="Image description" hint="Shown as the teaser under each image on the gallery page (not inside the opened view).">
             <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={5000} />
           </Field>
           <Field label="ALT text" hint="Accessibility text for screen readers and SEO.">

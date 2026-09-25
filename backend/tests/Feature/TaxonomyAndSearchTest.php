@@ -79,8 +79,31 @@ class TaxonomyAndSearchTest extends TestCase
             'slug' => 'how-to-learn-golang',
         ]);
 
-        $this->get('/sitemap.xml')->assertOk()->assertSee('how-to-learn-golang', false);
+        $this->get('/sitemap.xml')
+            ->assertOk()
+            ->assertSee('how-to-learn-golang', false)
+            ->assertSee('/photography', false)
+            ->assertSee('/painting', false);
         $this->get('/feed.xml')->assertOk()->assertSee('rss', false);
         $this->get('/robots.txt')->assertOk()->assertSee('Sitemap', false);
+    }
+
+    public function test_google_verification_file_is_served_from_settings(): void
+    {
+        \App\Models\Setting::query()->updateOrCreate(
+            ['key' => 'google_site_verification_filename'],
+            ['value' => 'google123abc.html'],
+        );
+        \App\Models\Setting::query()->updateOrCreate(
+            ['key' => 'google_site_verification_file_content'],
+            ['value' => 'google-site-verification: abc123'],
+        );
+        app(\App\Services\CacheService::class)->flushSettings();
+
+        $this->get('/google123abc.html')
+            ->assertOk()
+            ->assertSee('google-site-verification: abc123', false);
+
+        $this->get('/googlewrong.html')->assertNotFound();
     }
 }

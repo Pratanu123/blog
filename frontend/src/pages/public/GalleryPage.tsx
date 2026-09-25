@@ -3,16 +3,18 @@ import { createPortal } from "react-dom";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { publicService } from "../../services/public";
 import type { GalleryType, GalleryWork, SiteSettings } from "../../types";
+import { trackEvent } from "../../utils/analytics";
 import { PageBackLink } from "../../components/nav/PageBackLink";
 import { EngagementPanel } from "../../components/engagement/EngagementPanel";
 import { WatermarkedMedia } from "../../components/media/WatermarkedMedia";
 import { ShareBar } from "../../components/share/ShareBar";
+import { DocumentHead } from "../../components/seo/DocumentHead";
 import { Pagination } from "../../components/ui/Pagination";
 import { Spinner } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { lockBodyScroll } from "../../utils/bodyScrollLock";
 
-const copy: Record<GalleryType, { eyebrow: string; title: string; body: string; path: string }> = {
+const galleryFallbacks: Record<GalleryType, { eyebrow: string; title: string; body: string; path: string }> = {
   photography: {
     eyebrow: "Photography",
     title: "Light, place, and the frame around both.",
@@ -34,7 +36,19 @@ export function GalleryPage({ type }: { type: GalleryType }) {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [active, setActive] = useState<GalleryWork | null>(null);
-  const meta = copy[type];
+  const fallback = galleryFallbacks[type];
+  const meta = {
+    path: fallback.path,
+    eyebrow:
+      (type === "photography" ? settings.photography_eyebrow : settings.painting_eyebrow)?.trim() ||
+      fallback.eyebrow,
+    title:
+      (type === "photography" ? settings.photography_title : settings.painting_title)?.trim() ||
+      fallback.title,
+    body:
+      (type === "photography" ? settings.photography_body : settings.painting_body)?.trim() ||
+      fallback.body,
+  };
   const watermark = settings.site_name?.trim() || "Ink & Voltage";
 
   useEffect(() => {
@@ -64,9 +78,23 @@ export function GalleryPage({ type }: { type: GalleryType }) {
   function openWork(item: GalleryWork) {
     setActive(item);
     setSearchParams({ work: String(item.id) }, { replace: true });
+    trackEvent("gallery_work_open", {
+      content_type: type,
+      content_id: item.slug || item.id,
+      content_name: item.title,
+      work_id: item.id,
+    });
   }
 
   function closeWork() {
+    if (active) {
+      trackEvent("gallery_work_close", {
+        content_type: type,
+        content_id: active.slug || active.id,
+        content_name: active.title,
+        work_id: active.id,
+      });
+    }
     setActive(null);
     setSearchParams({}, { replace: true });
   }
@@ -79,6 +107,15 @@ export function GalleryPage({ type }: { type: GalleryType }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
+      <DocumentHead
+        title={`${meta.title} · ${settings.site_name || "Ink & Voltage"}`}
+        description={meta.body}
+        canonical={`${(settings.site_url || window.location.origin).replace(/\/$/, "")}${meta.path}`}
+        image={items[0]?.url || settings.default_og_image}
+        siteName={settings.site_name}
+        siteUrl={settings.site_url}
+        twitterHandle={settings.twitter_handle}
+      />
       <div className="mb-6 flex flex-wrap gap-3">
         <PageBackLink to="/" label="Back to Home" />
       </div>
@@ -109,7 +146,14 @@ export function GalleryPage({ type }: { type: GalleryType }) {
               />
               <div className="gallery-work-copy">
                 <p className="gallery-work-title font-display text-xl leading-snug line-clamp-2">{item.title}</p>
-                {item.short_description ? (
+                {item.description?.trim() ? (
+                  <p className="gallery-work-excerpt mt-2 text-sm leading-6 text-ink-700 dark:text-paper-100/80">
+                    {item.description.length > 110
+                      ? `${item.description.slice(0, 110).replace(/\s+\S*$/, "").trimEnd()}…`
+                      : item.description}{" "}
+                    <span className="font-medium text-rust-600">Read More</span>
+                  </p>
+                ) : item.short_description?.trim() ? (
                   <p className="gallery-work-excerpt mt-2 text-sm leading-6 text-ink-700 dark:text-paper-100/80">
                     {item.short_description.length > 110
                       ? `${item.short_description.slice(0, 110).replace(/\s+\S*$/, "").trimEnd()}…`
@@ -161,11 +205,10 @@ export function GalleryPage({ type }: { type: GalleryType }) {
                   <div className="space-y-4 p-5 pb-8 sm:p-6 sm:pb-6">
                     <p className="text-xs uppercase tracking-[0.2em] text-rust-600">{meta.eyebrow}</p>
                     <h2 className="font-display text-3xl leading-tight">{active.title}</h2>
-                    {active.short_description ? (
-                      <p className="text-sm leading-7 text-ink-700 dark:text-paper-100/75">{active.short_description}</p>
-                    ) : null}
-                    {active.description ? (
-                      <p className="text-sm leading-7 text-ink-700 dark:text-paper-100/75">{active.description}</p>
+                    {active.short_description?.trim() ? (
+                      <p className="text-sm leading-7 text-ink-700 dark:text-paper-100/75 whitespace-pre-wrap">
+                        {active.short_description}
+                      </p>
                     ) : null}
                     <ShareBar
                       url={shareUrl}
@@ -173,6 +216,8 @@ export function GalleryPage({ type }: { type: GalleryType }) {
                       headline="Share this work"
                       body={`Pass this ${meta.eyebrow.toLowerCase()} along — link out to X or LinkedIn.`}
                       className="mt-2"
+                      contentType={type}
+                      contentId={active.slug || active.id}
                     />
                     <EngagementPanel type="gallery_work" id={active.id} className="pt-2" />
                     <div className="flex flex-wrap gap-2 pt-1">
