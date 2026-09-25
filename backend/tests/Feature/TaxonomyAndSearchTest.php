@@ -106,4 +106,20 @@ class TaxonomyAndSearchTest extends TestCase
 
         $this->get('/googlewrong.html')->assertNotFound();
     }
+
+    public function test_sitemap_uses_app_url_when_site_url_is_localhost(): void
+    {
+        config(['app.url' => 'https://inkandvoltage.com']);
+
+        \App\Models\Setting::query()->updateOrCreate(
+            ['key' => 'site_url'],
+            ['value' => 'http://localhost'],
+        );
+        app(\App\Services\CacheService::class)->flushSettings();
+
+        $this->get('/sitemap.xml')
+            ->assertOk()
+            ->assertSee('https://inkandvoltage.com/', false)
+            ->assertDontSee('http://localhost/', false);
+    }
 }

@@ -156,6 +156,7 @@ class PublicContentService
     private function publicSettings(): array
     {
         $settings = $this->settings->all();
+        $settings['site_url'] = $this->settings->siteUrl();
         unset($settings['google_site_verification_file_content']);
 
         return $settings;
