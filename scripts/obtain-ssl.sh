@@ -32,16 +32,18 @@ if [ "$STAGING" = "1" ]; then
   echo "==> Using Let's Encrypt STAGING (not trusted by browsers)"
 fi
 
-echo "==> Requesting certificates for inkandvoltage.com + www"
+echo "==> Requesting certificates for inkandvoltage.com + www + portfolio"
 docker run --rm \
   -v "$APP_DIR/docker/certbot/www:/var/www/certbot" \
   -v "$APP_DIR/docker/certbot/conf:/etc/letsencrypt" \
   certbot/certbot certonly \
   --webroot \
   -w /var/www/certbot \
+  --expand \
   "${STAGING_FLAG[@]}" \
   -d inkandvoltage.com \
   -d www.inkandvoltage.com \
+  -d portfolio.inkandvoltage.com \
   --email "$EMAIL" \
   --agree-tos \
   --no-eff-email \
